@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardPost"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    tools:context="ru.netology.newjobit.view.activity.CardPostFragment">
+
+    <ImageView
+        android:id="@+id/avatarImageView"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="16dp"
+        app:srcCompat="@drawable/ic_ok_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/barrier"
+        android:contentDescription="@string/avatar_image"
+        />
+
+    <TextView
+        android:id="@+id/authorTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        app:layout_constraintEnd_toStartOf="@+id/postMenuImageView"
+        app:layout_constraintStart_toEndOf="@id/avatarImageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/publishedTextView"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="@sample/posts.json/data/author"/>
+
+    <TextView
+        android:id="@+id/publishedTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/postMenuImageView"
+        app:layout_constraintStart_toEndOf="@id/avatarImageView"
+        app:layout_constraintTop_toBottomOf="@id/authorTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/avatarImageView"
+        tools:text="@sample/posts.json/data/published"/>
+
+    <ImageButton
+        android:id="@+id/postMenuImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:padding="8dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/post_menu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/authorTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_more_vert_24" />
+
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="avatarImageView,publishedTextView,postMenuImageView" />
+
+    <TextView
+        android:id="@+id/contentTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:autoLink="web"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
+        app:layout_constraintBottom_toTopOf="@id/barrier2"
+        tools:text="@sample/posts.json/data/content"
+        />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="contentTextView" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/videoGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/barrier2"
+        app:layout_constraintBottom_toTopOf="@id/barrier3">
+
+        <ImageView
+            android:id="@+id/videoContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <ImageButton
+            android:id="@+id/playVideoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_play_circle_48"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="videoGroup" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/likeImageButton"
+        style="@style/LikeBarImageButton"
+        tools:text="@sample/posts.json/data/likes"
+        android:checkable="true"
+        app:icon="@drawable/ic_like_selector"
+        app:iconTint="@color/ic_like_tint_selector"
+        android:contentDescription="@string/content_like"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier3"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/shareImageButton"
+        style="@style/LikeBarImageButton"
+        tools:text="@sample/posts.json/data/reposts"
+        app:icon="@drawable/ic_baseline_share_24"
+        android:contentDescription="@string/content_share"
+        app:layout_constraintBottom_toBottomOf="@+id/likeImageButton"
+        app:layout_constraintStart_toEndOf="@id/likeImageButton"
+        app:layout_constraintTop_toTopOf="@+id/likeImageButton"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/viewsImageButton"
+        style="@style/LikeBarImageButton"
+        tools:text="@sample/posts.json/data/views"
+        app:icon="@drawable/ic_baseline_visibility_24"
+        android:contentDescription="@string/content_views"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/shareImageButton"
+        app:layout_constraintBottom_toBottomOf="@id/shareImageButton"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

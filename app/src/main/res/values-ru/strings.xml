@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Новая работа</string>
+    <string name="post_menu">Меню поста</string>
+    <string name="content_like">Лайк</string>
+    <string name="content_share">Поделиться</string>
+    <string name="content_views">Просмотры</string>
+    <string name="avatar_image">Аватар</string>
+    <string name="post_text">Текст поста</string>
+    <string name="editOptionPost">Изменить</string>
+    <string name="removeOptionPost">Удалить</string>
+    <string name="text_not_be_empty">Пост не может быть пустым</string>
+    <string name="chooser_share_post">Поделиться через приложение:</string>
+    <string name="play_video_app_chooser">Приложения для видео</string>
+    <string name="no_app_to_share">Отсутствуют приложение</string>
+    <string name="no_app_to_play">Отсутствуют приложение для воспроизведения</string>
+    <string name="google_play_unavailable">Google Api Недоступно</string>
+    <string name="notification_user_liked">%1$s поставил лайк посту %2$s</string>
+    <string name="channel_remote_name">Уведомления с сервера</string>
+    <string name="channel_remote_description">Уведомления с удалённого сервера</string>
+    <string name="invalid_incoming_data">%1$s не виноват, it-шники накосячили с данными</string>
+    <string name="find_his_face">find his face</string>
+    <string name="look_into_his_eyes">look into his eyes</string>
+    <string name="user_has_published_new_post">%1$s опубликовал новый пост:</string>
+    <string name="new_published_post_text">%1$s</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Электронная Почта</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Вход или Регистрация</string>
+    <string name="action_sign_in_short">Вход</string>
+    <string name="welcome">"Добро пожаловать!"</string>
+    <string name="invalid_username">Недопустимое имя пользователя</string>
+    <string name="invalid_password">Пароль должен быть >5 символов</string>
+    <string name="login_failed">"Ошибка входа"</string>
+</resources>

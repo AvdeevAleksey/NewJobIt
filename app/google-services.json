@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1061905544540",
+    "project_id": "newjobit",
+    "storage_bucket": "newjobit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061905544540:android:53fc0cd678994820157d99",
+        "android_client_info": {
+          "package_name": "ru.netology.newjobit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1061905544540-8bn94c473ppmuuilrubak6af90jov13e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB64nE7sQOy3QjVeobNdb-6fEtplsrnOD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061905544540-8bn94c473ppmuuilrubak6af90jov13e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
