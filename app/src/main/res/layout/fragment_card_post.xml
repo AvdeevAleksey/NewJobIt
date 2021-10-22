@@ -14,7 +14,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginBottom="16dp"
-        app:srcCompat="@drawable/ic_ok_24"
+        app:srcCompat="@drawable/ic_empty_avatar_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/barrier"
@@ -32,8 +32,7 @@
         app:layout_constraintStart_toEndOf="@id/avatarImageView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/publishedTextView"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="@sample/posts.json/data/author"/>
+        app:layout_constraintVertical_chainStyle="packed"/>
 
     <TextView
         android:id="@+id/publishedTextView"
@@ -44,8 +43,7 @@
         app:layout_constraintEnd_toStartOf="@+id/postMenuImageView"
         app:layout_constraintStart_toEndOf="@id/avatarImageView"
         app:layout_constraintTop_toBottomOf="@id/authorTextView"
-        app:layout_constraintBottom_toBottomOf="@+id/avatarImageView"
-        tools:text="@sample/posts.json/data/published"/>
+        app:layout_constraintBottom_toBottomOf="@+id/avatarImageView"/>
 
     <ImageButton
         android:id="@+id/postMenuImageView"
@@ -79,7 +77,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier"
         app:layout_constraintBottom_toTopOf="@id/barrier2"
-        tools:text="@sample/posts.json/data/content"
         />
 
     <androidx.constraintlayout.widget.Barrier
@@ -134,7 +131,6 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/likeImageButton"
         style="@style/LikeBarImageButton"
-        tools:text="@sample/posts.json/data/likes"
         android:checkable="true"
         app:icon="@drawable/ic_like_selector"
         app:iconTint="@color/ic_like_tint_selector"
@@ -146,7 +142,6 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/shareImageButton"
         style="@style/LikeBarImageButton"
-        tools:text="@sample/posts.json/data/reposts"
         app:icon="@drawable/ic_baseline_share_24"
         android:contentDescription="@string/content_share"
         app:layout_constraintBottom_toBottomOf="@+id/likeImageButton"
@@ -156,7 +151,6 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/viewsImageButton"
         style="@style/LikeBarImageButton"
-        tools:text="@sample/posts.json/data/views"
         app:icon="@drawable/ic_baseline_visibility_24"
         android:contentDescription="@string/content_views"
         app:layout_constraintEnd_toEndOf="parent"

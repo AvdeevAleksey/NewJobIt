@@ -3,7 +3,7 @@ package ru.netology.newjobit.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import ru.netology.newjobit.model.LoginDataSource
-import ru.netology.newjobit.repository.LoginRepository
+import ru.netology.newjobit.repository.LoginRepositoryRoom
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.
@@ -15,7 +15,7 @@ class LoginViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
             return LoginViewModel(
-                loginRepository = LoginRepository(
+                loginRepositoryRoom = LoginRepositoryRoom(
                     dataSource = LoginDataSource()
                 )
             ) as T
