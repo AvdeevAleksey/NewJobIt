@@ -1,7 +1,6 @@
 package ru.netology.newjobit.view.activity
 
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import android.os.Bundle
@@ -18,14 +17,11 @@ import ru.netology.newjobit.R
 import ru.netology.newjobit.databinding.FragmentLoginBinding
 import ru.netology.newjobit.view.activity.ui.login.LoggedInUserView
 import ru.netology.newjobit.viewmodel.LoginViewModel
-import ru.netology.newjobit.viewmodel.LoginViewModelFactory
-import ru.netology.newjobit.viewmodel.PostViewModel
 
 class LoginFragment : Fragment() {
 
-    private lateinit var loginViewModel: LoginViewModel
     private var myBinding: FragmentLoginBinding? = null
-    private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val loginViewModel: LoginViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -44,8 +40,6 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
 
         val usernameEditText = binding.usernameEditText
         val passwordEditText = binding.passwordEditText
@@ -112,6 +106,7 @@ class LoginFragment : Fragment() {
                 usernameEditText.text.toString(),
                 passwordEditText.text.toString()
             )
+            loginViewModel.saveLogin()
             findNavController().navigate(
                 R.id.action_loginFragment_to_feedFragment
             )

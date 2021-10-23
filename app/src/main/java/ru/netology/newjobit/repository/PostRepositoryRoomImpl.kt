@@ -7,32 +7,32 @@ import androidx.lifecycle.Transformations
 import ru.netology.newjobit.model.entity.PostEntity
 
 class PostRepositoryRoomImpl(
-    private val dao: PostDao
+    private val postDao: PostDao
 ) : PostRepository {
 
-    override fun getAll(): LiveData<List<Post>> = Transformations.map(dao.getAll()) { list ->
+    override fun getAll(): LiveData<List<Post>> = Transformations.map(postDao.getAll()) { list ->
         list.map { entity ->
             entity.toPost()
         }
     }
 
     override fun likeById(id: Long) {
-        dao.likeById(id)
+        postDao.likeById(id)
     }
 
     override fun shareById(id: Long) {
-        dao.shareById(id)
+        postDao.shareById(id)
     }
 
     override fun viewingById(id: Long) {
-        dao.viewingById(id)
+        postDao.viewingById(id)
     }
 
     override fun savePost(post: Post) {
-        dao.savePost(PostEntity.fromPost(post))
+        postDao.savePost(PostEntity.fromPost(post))
     }
 
     override fun removeById(id: Long) {
-        dao.removeById(id)
+        postDao.removeById(id)
     }
 }

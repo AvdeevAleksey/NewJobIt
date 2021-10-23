@@ -1,9 +1,12 @@
 package ru.netology.newjobit.repository
 
 import androidx.lifecycle.LiveData
-import ru.netology.newjobit.model.dto.LoggedInUser
+import ru.netology.newjobit.model.Result
+import ru.netology.newjobit.model.dto.Login
 
 interface LoginRepository {
-    fun login(username: String, password: String): LiveData<List<LoggedInUser>>
+    fun getAll(): LiveData<List<Login>>
+    fun login(username: String, password: String): Result<Login>
+    fun saveLogin(login: Login)
     fun logout()
 }

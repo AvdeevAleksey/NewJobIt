@@ -1,30 +1,57 @@
 package ru.netology.newjobit.viewmodel
 
+import android.app.Application
+import android.net.Uri
+import android.provider.ContactsContract
+import android.provider.ContactsContract.CommonDataKinds.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
+import androidx.lifecycle.AndroidViewModel
 import ru.netology.newjobit.R
+import ru.netology.newjobit.model.LoginDataSource
 import ru.netology.newjobit.repository.LoginRepositoryRoom
 import ru.netology.newjobit.model.Result
+import ru.netology.newjobit.model.db.AppDb
+import ru.netology.newjobit.model.dto.Login
+import ru.netology.newjobit.repository.LoginRepository
 
 import ru.netology.newjobit.view.activity.ui.login.LoggedInUserView
 import ru.netology.newjobit.view.activity.ui.login.LoginFormState
 import ru.netology.newjobit.view.activity.ui.login.LoginResult
 
-class LoginViewModel(
-    private val loginRepositoryRoom: LoginRepositoryRoom
-    ) : ViewModel() {
+private val empty = Login(
+    userId = 0L,
+    displayName = "",
+    passwd = "",
+    email = ""
+)
 
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val loginRepository: LoginRepository = LoginRepositoryRoom(
+        AppDb.getInstance(application).loginDao(),
+        loginDataSource = LoginDataSource()
+    )
+
+    val loginLiveData = loginRepository.getAll()
+    val edited = MutableLiveData(empty)
     private val editedLoginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = editedLoginForm
-
     private val editedLoginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = editedLoginResult
 
+    fun saveLogin() {
+        edited.value?.let {
+            loginRepository.saveLogin(it)
+        }
+        edited.value = empty
+    }
+
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
-        val result = loginRepositoryRoom.login(username, password)
+        val result = loginRepository.login(username, password)
 
         if (result is Result.Success) {
             editedLoginResult.value =

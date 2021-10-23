@@ -75,7 +75,7 @@ class FeedFragment : Fragment() {
 
         binding.rvPostRecyclerView.adapter = postsAdapter
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
+        viewModel.postLiveData.observe(viewLifecycleOwner) { posts ->
             postsAdapter.submitList(posts)
         }
 

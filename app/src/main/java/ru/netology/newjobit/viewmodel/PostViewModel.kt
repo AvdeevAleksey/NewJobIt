@@ -22,18 +22,18 @@ private val empty = Post(
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PostRepository = PostRepositoryRoomImpl(
+    private val postRepository: PostRepository = PostRepositoryRoomImpl(
         AppDb.getInstance(application).postDao()
     )
-    val data = repository.getAll()
+    val postLiveData = postRepository.getAll()
     val edited = MutableLiveData(empty)
-    fun likeById(id: Long) = repository.likeById(id)
-    fun shareById(id: Long) = repository.shareById(id)
-    fun viewingById(id: Long) = repository.viewingById(id)
-    fun removeById(id: Long) = repository.removeById(id)
+    fun likeById(id: Long) = postRepository.likeById(id)
+    fun shareById(id: Long) = postRepository.shareById(id)
+    fun viewingById(id: Long) = postRepository.viewingById(id)
+    fun removeById(id: Long) = postRepository.removeById(id)
     fun savePost() {
         edited.value?.let {
-            repository.savePost(it)
+            postRepository.savePost(it)
         }
         edited.value = empty
     }

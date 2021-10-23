@@ -34,7 +34,7 @@ class CardPostFragment : Fragment() {
 
         val postId = arguments?.getParcelable<Post>(AndroidUtils.POST_KEY)?.id
 
-        viewModel.data.map { posts ->
+        viewModel.postLiveData.map { posts ->
             posts.find { it.id == postId }
         }.observe(viewLifecycleOwner) { post ->
             post ?: run {

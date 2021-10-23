@@ -2,7 +2,7 @@ package ru.netology.newjobit.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.netology.newjobit.model.dto.LoggedInUser
+import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.model.dto.Post
 
 @Entity
@@ -30,11 +30,13 @@ data class PostEntity(
 data class LoginEntity(
     @PrimaryKey(autoGenerate = true)
     val userId: Long,
-    val displayName: String
+    val displayName: String,
+    val passwd: String,
+    val email: String
 ) {
-    fun toLoggedIn(): LoggedInUser = LoggedInUser(userId, displayName)
+    fun toLoginIn(): Login = Login(userId, displayName, passwd, email)
 
     companion object {
-        fun fromLoggedIn(loggedInUser: LoggedInUser): LoginEntity = LoginEntity(loggedInUser.userId,loggedInUser.displayName)
+        fun fromLoginIn(login: Login): LoginEntity = LoginEntity(login.userId,login.displayName, login.passwd, login.email)
     }
 }

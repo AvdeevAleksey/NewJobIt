@@ -1,9 +1,7 @@
 package ru.netology.newjobit.model
 
-import android.provider.Settings.Global.getString
-import ru.netology.newjobit.R
-import ru.netology.newjobit.R.string.fake_display_name
-import ru.netology.newjobit.model.dto.LoggedInUser
+import ru.netology.newjobit.model.dao.LoginDao
+import ru.netology.newjobit.model.dto.Login
 import java.io.IOException
 import java.lang.Long.parseLong
 import java.util.*
@@ -13,11 +11,10 @@ import java.util.*
  */
 class LoginDataSource {
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(username: String, password: String, loginDao: LoginDao): Result<Login> {
         try {
-            // TODO: handle loggedInUser authentication
-
-            val fakeUser = LoggedInUser(parseLong(UUID.randomUUID().toString()), username)
+//            val fakeUser = Login(parseLong(UUID.randomUUID().toString()), username)
+            val fakeUser = loginDao.getLoginById(loginDao.getLoginIdByDisplayName(username)).toLoginIn()
             return Result.Success(fakeUser)
         } catch (e: Throwable) {
             return Result.Error(IOException("Error logging in", e))
