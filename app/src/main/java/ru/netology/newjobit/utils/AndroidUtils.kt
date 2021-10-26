@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager
 object AndroidUtils {
     const val POST_FILE = "posts.json"
     const val POST_KEY = "post"
+    const val LOGIN_KEY = "login"
 
     fun hideKeyboard(view: View) {
         val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

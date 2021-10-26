@@ -16,23 +16,19 @@ import ru.netology.newjobit.model.Result
 import ru.netology.newjobit.model.db.AppDb
 import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.repository.LoginRepository
-
-import ru.netology.newjobit.view.activity.ui.login.LoggedInUserView
-import ru.netology.newjobit.view.activity.ui.login.LoginFormState
-import ru.netology.newjobit.view.activity.ui.login.LoginResult
+import ru.netology.newjobit.view.activity.ui.login.*
 
 private val empty = Login(
     userId = 0L,
     displayName = "",
     passwd = "",
-    email = ""
+    avatar = ""
 )
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val loginRepository: LoginRepository = LoginRepositoryRoom(
-        AppDb.getInstance(application).loginDao(),
-        loginDataSource = LoginDataSource()
+        AppDb.getInstance(application).loginDao(),LoginDataSource()
     )
 
     val loginLiveData = loginRepository.getAll()
@@ -41,6 +37,22 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     val loginFormState: LiveData<LoginFormState> = editedLoginForm
     private val editedLoginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = editedLoginResult
+    private val editedPasswdForm = MutableLiveData<PasswdFormState>()
+    val passwdFormState: LiveData<PasswdFormState> = editedPasswdForm
+    private val passwdConfirmed = MutableLiveData<PasswdResult>()
+    val passwdResult: LiveData<PasswdResult> = passwdConfirmed
+
+    fun checkLogin(username: String, password: String) : Boolean {
+        val result = loginRepository.login(username, password)
+        return if (result is Result.Success) {
+            editedLoginResult.value =
+                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+            true
+        } else {
+            editedLoginResult.value = LoginResult(error = R.string.login_failed)
+            false
+        }
+    }
 
     fun saveLogin() {
         edited.value?.let {
@@ -68,6 +80,14 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             editedLoginForm.value = LoginFormState(passwordError = R.string.invalid_password)
         } else {
             editedLoginForm.value = LoginFormState(isDataValid = true)
+        }
+    }
+
+    fun regPasswdConfirmDataChange(passwd: String, passwdConfirm: String ) {
+        if (passwd != passwdConfirm) {
+            editedPasswdForm.value = PasswdFormState(passwordConfirmError = R.string.passwords_dont_match)
+        } else {
+            editedPasswdForm.value = PasswdFormState(isDataValid = true)
         }
     }
 

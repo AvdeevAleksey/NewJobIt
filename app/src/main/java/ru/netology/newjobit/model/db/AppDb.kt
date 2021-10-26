@@ -7,9 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import ru.netology.newjobit.model.dao.LoginDao
 import ru.netology.newjobit.model.dao.PostDao
+import ru.netology.newjobit.model.dto.Login
+import ru.netology.newjobit.model.entity.LoginEntity
 import ru.netology.newjobit.model.entity.PostEntity
 
-@Database(entities = [PostEntity::class], version = 1)
+@Database(entities = [PostEntity::class,LoginEntity::class], version = 1)
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao
     abstract fun loginDao(): LoginDao

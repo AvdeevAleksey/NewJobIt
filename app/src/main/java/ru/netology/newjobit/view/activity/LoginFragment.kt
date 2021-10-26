@@ -11,10 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.newjobit.R
 import ru.netology.newjobit.databinding.FragmentLoginBinding
+import ru.netology.newjobit.model.dto.Login
+import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
 import ru.netology.newjobit.view.activity.ui.login.LoggedInUserView
 import ru.netology.newjobit.viewmodel.LoginViewModel
 
@@ -100,16 +103,39 @@ class LoginFragment : Fragment() {
             false
         }
 
+//        loginViewModel.loginLiveData.observe(viewLifecycleOwner) {
+//            it.let { login ->
+//                login
+//            }
+//        }
+
+        loginViewModel.edited.observe(viewLifecycleOwner) { login ->
+            if (login.userId == 0L) {
+                return@observe
+            }
+        }
+
         loginButton.setOnClickListener {
             loadingProgressBar.visibility = View.VISIBLE
-            loginViewModel.login(
+            val login: Login = loginViewModel.edited.value.let { login ->
+                (if (login?.userId == 0L) Login(0L, displayName = usernameEditText.text.toString(), passwordEditText.text.toString(), "") else login)!!
+            }
+            if (loginViewModel.checkLogin(usernameEditText.text.toString(), passwordEditText.text.toString())) {
+                loginViewModel.login(
                 usernameEditText.text.toString(),
                 passwordEditText.text.toString()
             )
-            loginViewModel.saveLogin()
-            findNavController().navigate(
-                R.id.action_loginFragment_to_feedFragment
-            )
+                findNavController().navigate(
+                    R.id.action_loginFragment_to_feedFragment,
+                    bundleOf(LOGIN_KEY to login)
+                )
+            } else {
+                findNavController().navigate(
+                    R.id.action_loginFragment_to_userRegistrationFragment,
+                    bundleOf(LOGIN_KEY to login)
+                )
+            }
+
         }
     }
 

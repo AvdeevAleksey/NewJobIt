@@ -32,11 +32,11 @@ data class LoginEntity(
     val userId: Long,
     val displayName: String,
     val passwd: String,
-    val email: String
+    val avatar: String
 ) {
-    fun toLoginIn(): Login = Login(userId, displayName, passwd, email)
+    fun toLoginIn(): Login = Login(userId, displayName, passwd, avatar)
 
     companion object {
-        fun fromLoginIn(login: Login): LoginEntity = LoginEntity(login.userId,login.displayName, login.passwd, login.email)
+        fun fromLoginIn(login: Login): LoginEntity = LoginEntity(login.userId,login.displayName, login.passwd, login.avatar)
     }
 }
