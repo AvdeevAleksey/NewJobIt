@@ -35,10 +35,11 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         myBinding = FragmentLoginBinding.inflate(inflater, container, false)
-        return binding.root
 
+
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,12 +104,6 @@ class LoginFragment : Fragment() {
             false
         }
 
-//        loginViewModel.loginLiveData.observe(viewLifecycleOwner) {
-//            it.let { login ->
-//                login
-//            }
-//        }
-
         loginViewModel.edited.observe(viewLifecycleOwner) { login ->
             if (login.userId == 0L) {
                 return@observe
@@ -118,7 +113,7 @@ class LoginFragment : Fragment() {
         loginButton.setOnClickListener {
             loadingProgressBar.visibility = View.VISIBLE
             val login: Login = loginViewModel.edited.value.let { login ->
-                (if (login?.userId == 0L) Login(0L, displayName = usernameEditText.text.toString(), passwordEditText.text.toString(), "") else login)!!
+                if (login?.userId == 0L) login else return@setOnClickListener
             }
             if (loginViewModel.checkLogin(usernameEditText.text.toString(), passwordEditText.text.toString())) {
                 loginViewModel.login(
