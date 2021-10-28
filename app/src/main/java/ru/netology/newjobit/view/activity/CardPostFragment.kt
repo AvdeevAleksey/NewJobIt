@@ -20,7 +20,7 @@ import ru.netology.newjobit.model.dto.Post
 import ru.netology.newjobit.utils.AndroidUtils
 import ru.netology.newjobit.viewmodel.PostViewModel
 
-class CardPostFragment : Fragment() {
+class wCardPostFragment : Fragment() {
 
     private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 

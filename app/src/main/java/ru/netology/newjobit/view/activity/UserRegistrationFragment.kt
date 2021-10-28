@@ -40,6 +40,12 @@ class UserRegistrationFragment : Fragment() {
     ): View? {
         myBinding = FragmentUserRegistrationBinding.inflate(inflater,container,false)
 
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val loginId = arguments?.getParcelable<Login>(AndroidUtils.LOGIN_KEY)?.userId
 
         loginViewModel.loginLiveData.map { logins ->
@@ -128,76 +134,6 @@ class UserRegistrationFragment : Fragment() {
             }
         }
 
-//        viewModel.postLiveData.map { posts ->
-//            posts.find { it.id == postId }
-//        }.observe(viewLifecycleOwner) { post ->
-//            post ?: run {
-//                findNavController().navigateUp()
-//                return@observe
-//            }
-//
-//            binding.apply {
-//                authorTextView.text = post.author
-//                publishedTextView.text = post.published
-//                contentTextView.text = post.content
-//                videoContent.setImageURI(Uri.parse(post.videoInPost))
-//                shareImageButton.text = countMyClick(post.shareCount)
-//                viewsImageButton.text = countMyClick(post.viewingCount)
-//                likeImageButton.isChecked = post.likedByMe
-//                likeImageButton.text = countMyClick(post.likesCount)
-//                videoGroup.isVisible = post.videoInPost.isNotBlank()
-//
-//                playVideoButton.setOnClickListener {
-//                    playVideo(post)
-//                }
-//                videoGroup.setOnClickListener {
-//                    playVideo(post)
-//                }
-//                likeImageButton.setOnClickListener {
-//                    viewModel.likeById(post.id)
-//                }
-//                shareImageButton.setOnClickListener {
-//                    val intent = Intent().apply {
-//                        action = Intent.ACTION_SEND
-//                        putExtra(Intent.EXTRA_TEXT, post.content)
-//                        type = "text/plane"
-//                    }
-//                    val shareIntent =
-//                        Intent.createChooser(intent, getString(R.string.chooser_share_post))
-//                    startActivity(shareIntent)
-//
-//                    viewModel.shareById(post.id)
-//                }
-//                viewsImageButton.setOnClickListener {
-//                    viewModel.viewingById(post.id)
-//                }
-//                postMenuImageView.setOnClickListener {
-//                    PopupMenu(it.context, it).apply {
-//                        inflate(R.menu.options_post_menu)
-//                        setOnMenuItemClickListener { item ->
-//                            when (item.itemId) {
-//                                R.id.postRemove -> {
-//                                    viewModel.removeById(post.id)
-//                                    true
-//                                }
-//                                R.id.postEdit -> {
-//                                    findNavController().navigate(
-//                                        R.id.action_fragmentCardPost_to_postFragment,
-//                                        bundleOf(AndroidUtils.POST_KEY to post)
-//                                    )
-//                                    viewModel.editPost(post)
-//                                    true
-//                                }
-//                                else -> false
-//                            }
-//
-//                        }
-//                    }.show()
-//                }
-//            }
-//        }
-
-        return binding.root
     }
 
     private fun updatePasswdConfirm(model: LoggedInUserView) {
