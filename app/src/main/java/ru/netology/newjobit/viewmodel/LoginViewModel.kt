@@ -4,11 +4,8 @@ import android.app.Application
 import android.net.Uri
 import android.provider.ContactsContract
 import android.provider.ContactsContract.CommonDataKinds.*
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import android.util.Patterns
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.*
 import ru.netology.newjobit.R
 import ru.netology.newjobit.model.LoginDataSource
 import ru.netology.newjobit.repository.LoginRepositoryRoom
@@ -61,16 +58,11 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = empty
     }
 
-    fun login(username: String, password: String) {
-        // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
-
-        if (result is Result.Success) {
-            editedLoginResult.value =
-                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-        } else {
-            editedLoginResult.value = LoginResult(error = R.string.login_failed)
+    fun login(username: String, password: String) = loginLiveData.map { logins ->
+        logins.find {
+            it.displayName == username && it.passwd == password
         }
+
     }
 
     fun loginDataChanged(username: String, password: String) {

@@ -61,30 +61,49 @@ class LoginFragment : Fragment() {
         usrLoginEditText.addTextChangedListener(afterTextChangedListener)
         passwdEditText.addTextChangedListener(afterTextChangedListener)
 
+        loginViewModel.edited.observe(viewLifecycleOwner) {
+            if (it.userId == 0L) it else return@observe
+        }
+
         loginViewModel.loginLiveData.map { logins ->
-            logins.find { it.displayName == usrLoginEditText.text.toString() && it.passwd == passwdEditText.text.toString() }
+            logins.find { it.equals(loginViewModel.login(usrLoginEditText.text.toString(),passwdEditText.text.toString())) }
         }.observe(viewLifecycleOwner) { login ->
             login ?: kotlin.run {
-                val login = loginViewModel.edited.value.let {
+                loginViewModel.edited.value.let {
                     if (login?.userId == 0L) login else return@observe
                 }
-                findNavController().navigate(
-                    R.id.action_loginFragment_to_userRegistrationFragment,
-                    bundleOf(LOGIN_KEY to login)
-                )
             }
             binding.apply {
 
-                singInButton.setOnClickListener{
+
+                singInButton.setOnClickListener {
+                    val login = loginViewModel.edited.value.let {
+                        if (login?.userId == 0L) login else return@setOnClickListener
+                    }
+                    if (login.userId != 0L) {
                         findNavController().navigate(
                             R.id.action_loginFragment_to_feedFragment,
                             bundleOf(LOGIN_KEY to login)
                         )
+                    }else {
+                        findNavController().navigate(
+                            R.id.action_loginFragment_to_userRegistrationFragment,
+                            bundleOf(LOGIN_KEY to login)
+                        )
                     }
                 }
-
             }
+        }
+
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+
+
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
