@@ -13,8 +13,10 @@ class LoginDataSource {
 
     fun login(username: String, password: String, loginDao: LoginDao): Result<Login> {
         try {
-//            val fakeUser = Login(parseLong(UUID.randomUUID().toString()), username)
-            val fakeUser = loginDao.getLoginById(loginDao.getLoginIdByDisplayName(username)).toLoginIn()
+            val fakeUser = if (loginDao.userLoggedIn(username,password))
+                loginDao.getLoginById(loginDao.getLoginIdByDisplayName(username)).toLoginIn()
+            else Login(0L, username,password,"")
+
             return Result.Success(fakeUser)
         } catch (e: Throwable) {
             return Result.Error(IOException("Error logging in", e))

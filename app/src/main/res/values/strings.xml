@@ -35,4 +35,8 @@
     <string name="fake_display_name">Unregisterid user</string>
     <string name="passwords_dont_match">Passwords don\'t match</string>
     <string name="default_text">Enter text</string>
+    <string name="incorrect_password">Incorrect password</string>
+    <string name="passwords_dont_empty">Password cannot be empty</string>
+    <string name="enter_login">Enter login</string>
+    <string name="enter_password">Enter password</string>
 </resources>

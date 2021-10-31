@@ -23,6 +23,7 @@ import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.utils.AndroidUtils
 import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
 import ru.netology.newjobit.view.activity.ui.login.LoggedInUserView
+import ru.netology.newjobit.view.activity.ui.login.LoginResult
 import ru.netology.newjobit.viewmodel.LoginViewModel
 
 class LoginFragment : Fragment() {
@@ -52,7 +53,7 @@ class LoginFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable) {
-                loginViewModel.loginDataChanged(
+                loginViewModel.accessVerification(
                     usernameEditText.text.toString(),
                     passwordEditText.text.toString()
                 )
@@ -61,49 +62,36 @@ class LoginFragment : Fragment() {
         usrLoginEditText.addTextChangedListener(afterTextChangedListener)
         passwdEditText.addTextChangedListener(afterTextChangedListener)
 
-        loginViewModel.edited.observe(viewLifecycleOwner) {
-            if (it.userId == 0L) it else return@observe
+        loginViewModel.loginResult.observe(viewLifecycleOwner) {
+            when (it) {
+                LoginResult.IncorrectPassword -> {
+                    Toast.makeText(requireContext(),R.string.incorrect_password,Toast.LENGTH_LONG).show()
+                }
+                is LoginResult.Success -> {
+                    findNavController().navigate(
+                        R.id.action_loginFragment_to_feedFragment,
+                        bundleOf(LOGIN_KEY to usrLoginEditText.text.toString())
+                    )
+                }
+                LoginResult.UserNotFound -> {
+                    Toast.makeText(requireContext(),"User not found",Toast.LENGTH_LONG).show()
+                    val login = loginViewModel.edited.value?.copy(displayName = usrLoginEditText.text.toString())
+                    findNavController().navigate(
+                        R.id.action_loginFragment_to_userRegistrationFragment,
+                        bundleOf(LOGIN_KEY to login)
+                    )
+                }
+            }
         }
 
-        loginViewModel.loginLiveData.map { logins ->
-            logins.find { it.equals(loginViewModel.login(usrLoginEditText.text.toString(),passwdEditText.text.toString())) }
-        }.observe(viewLifecycleOwner) { login ->
-            login ?: kotlin.run {
-                loginViewModel.edited.value.let {
-                    if (login?.userId == 0L) login else return@observe
-                }
-            }
-            binding.apply {
-
-
-                singInButton.setOnClickListener {
-                    val login = loginViewModel.edited.value.let {
-                        if (login?.userId == 0L) login else return@setOnClickListener
-                    }
-                    if (login.userId != 0L) {
-                        findNavController().navigate(
-                            R.id.action_loginFragment_to_feedFragment,
-                            bundleOf(LOGIN_KEY to login)
-                        )
-                    }else {
-                        findNavController().navigate(
-                            R.id.action_loginFragment_to_userRegistrationFragment,
-                            bundleOf(LOGIN_KEY to login)
-                        )
-                    }
-                }
-            }
+        singInButton.setOnClickListener {
+            loginViewModel.login(
+                usrLoginEditText.text.toString(),
+                passwdEditText.text.toString()
+            )
         }
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-
-
-
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {

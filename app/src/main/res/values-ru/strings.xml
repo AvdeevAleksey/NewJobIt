@@ -35,4 +35,8 @@
     <string name="fake_display_name">Незарегистрированный пользователь</string>
     <string name="passwords_dont_match">Пароли не совпадают</string>
     <string name="default_text">Введите текст</string>
+    <string name="incorrect_password">Неверный пароль</string>
+    <string name="passwords_dont_empty">Пароль не может быть пустым</string>
+    <string name="enter_login">Введите логин</string>
+    <string name="enter_password">Введите пароль</string>
 </resources>

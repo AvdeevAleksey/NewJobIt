@@ -7,12 +7,28 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-    <style name="RegistrationView" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="UserAvatar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        android:scaleType="fitXY"
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+    <style name="RegistrationLogin" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="android:layout_margin">24dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">30sp</item>
-        <item name="android:hint">@string/default_text</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:hint">@string/enter_login</item>
         <item name="android:background">@android:color/transparent</item>
+    </style>
+    <style name="RegistrationPasswords" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="android:layout_margin">24dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:hint">@string/enter_password</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:inputType">textPassword</item>
     </style>
 </resources>

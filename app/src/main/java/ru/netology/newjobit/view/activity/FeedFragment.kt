@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,6 +18,8 @@ import ru.netology.newjobit.utils.AndroidUtils.POST_KEY
 import ru.netology.newjobit.viewmodel.PostViewModel
 import ru.netology.newjobit.R
 import ru.netology.newjobit.databinding.FragmentFeedBinding
+import ru.netology.newjobit.model.dto.Login
+import ru.netology.newjobit.utils.AndroidUtils
 
 class FeedFragment : Fragment() {
 
@@ -27,51 +30,55 @@ class FeedFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
         ): View? {
-            val binding = FragmentFeedBinding.inflate(inflater,container,false)
-            val postsAdapter = PostsAdapter (object : OnInteractionListener {
-                override fun onLike(post: Post) {
-                    viewModel.likeById(post.id)
-                }
-                override fun onShare(post: Post) {
-                    val intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT,post.content)
-                        type = "text/plain"
-                    }
-                    val shareIntent =
-                            Intent.createChooser(intent,getString(R.string.chooser_share_post))
-                    startActivity(shareIntent)
-                    viewModel.shareById(post.id)
-                }
-                override fun onViewing(post: Post) {
-                    viewModel.viewingById(post.id)
-                }
-                override fun onPostEdit(post: Post) {
-                    findNavController().navigate(
-                        R.id.action_feedFragment_to_postFragment,
-                        bundleOf("post" to post)
-                    )
-                    viewModel.editPost(post)
-                }
-                override fun onPostRemove(post: Post) {
-                    viewModel.removeById(post.id)
-                }
-                override fun onPlayVideo(post: Post) {
-                    val intent = Intent().apply {
-                        Intent.ACTION_VIEW
-                        data = Uri.parse(post.videoInPost)
-                    }
-                    val playVideoIntent = Intent.createChooser(intent,getString(R.string.play_video_app_chooser))
-                    startActivity(playVideoIntent)
-                }
 
-                override fun onPostOpen(post: Post) {
-                    findNavController().navigate(
-                        R.id.action_feedFragment_to_fragmentCardPost,
-                        bundleOf(POST_KEY to post)
-                    )
+        val login = arguments?.getParcelable<Login>(AndroidUtils.LOGIN_KEY)
+        if (login != null) Toast.makeText(context,getString(R.string.welcome) + login?.displayName, Toast.LENGTH_SHORT).show()
+        arguments?.remove(AndroidUtils.LOGIN_KEY)
+        val binding = FragmentFeedBinding.inflate(inflater,container,false)
+        val postsAdapter = PostsAdapter (object : OnInteractionListener {
+            override fun onLike(post: Post) {
+                viewModel.likeById(post.id)
+            }
+            override fun onShare(post: Post) {
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT,post.content)
+                    type = "text/plain"
                 }
-            })
+                val shareIntent =
+                        Intent.createChooser(intent,getString(R.string.chooser_share_post))
+                startActivity(shareIntent)
+                viewModel.shareById(post.id)
+            }
+            override fun onViewing(post: Post) {
+                viewModel.viewingById(post.id)
+            }
+            override fun onPostEdit(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_postFragment,
+                    bundleOf("post" to post)
+                )
+                viewModel.editPost(post)
+            }
+            override fun onPostRemove(post: Post) {
+                viewModel.removeById(post.id)
+            }
+            override fun onPlayVideo(post: Post) {
+                val intent = Intent().apply {
+                    Intent.ACTION_VIEW
+                    data = Uri.parse(post.videoInPost)
+                }
+                val playVideoIntent = Intent.createChooser(intent,getString(R.string.play_video_app_chooser))
+                startActivity(playVideoIntent)
+            }
+
+            override fun onPostOpen(post: Post) {
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_fragmentCardPost,
+                    bundleOf(POST_KEY to post)
+                )
+            }
+        })
 
         binding.rvPostRecyclerView.adapter = postsAdapter
 
@@ -87,7 +94,7 @@ class FeedFragment : Fragment() {
 
         binding.fabAddPost.setOnClickListener {
             val post: Post = viewModel.edited.value.let { post ->
-                if (post?.id == 0L) post else return@setOnClickListener
+                if (post?.id == 0L) post.copy(author = login!!.displayName) else return@setOnClickListener
             }
             findNavController().navigate(
                 R.id.action_feedFragment_to_postFragment,

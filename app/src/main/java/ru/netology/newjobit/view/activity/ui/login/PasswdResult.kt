@@ -1,6 +1,7 @@
 package ru.netology.newjobit.view.activity.ui.login
 
-data class PasswdResult(
-    val success: LoggedInUserView? = null,
-    val error: Int? = null
-)
+sealed class PasswdResult {
+    data class Success(val view: LoggedInUserView? = null): PasswdResult()
+    object PasswordsNotMach : PasswdResult()
+    object PasswordNotEntered : PasswdResult()
+}

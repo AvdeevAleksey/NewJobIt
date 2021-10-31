@@ -1,8 +1,15 @@
 package ru.netology.newjobit.view.activity
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
@@ -12,6 +19,8 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.constraintlayout.widget.ConstraintLayout.VERSION
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -20,12 +29,18 @@ import ru.netology.newjobit.viewmodel.LoginViewModel
 import androidx.lifecycle.Observer
 import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
+import kotlinx.android.synthetic.main.fragment_card_post.*
+import kotlinx.android.synthetic.main.fragment_login.*
 import ru.netology.newjobit.R
 import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.model.dto.Post
 import ru.netology.newjobit.utils.AndroidUtils
+import ru.netology.newjobit.utils.AndroidUtils.CAMERA_REQUEST_CODE
 import ru.netology.newjobit.view.activity.ui.login.LoggedInUserView
+import ru.netology.newjobit.view.activity.ui.login.PasswdResult
 import ru.netology.newjobit.view.adapter.countMyClick
+import java.io.File
+import java.util.jar.Manifest
 
 class UserRegistrationFragment : Fragment() {
 
@@ -40,112 +55,98 @@ class UserRegistrationFragment : Fragment() {
     ): View? {
         myBinding = FragmentUserRegistrationBinding.inflate(inflater,container,false)
 
-        return binding.root
-    }
+        val userDisplayName = arguments?.getParcelable<Login>(AndroidUtils.LOGIN_KEY)?.displayName
+        arguments?.remove(AndroidUtils.LOGIN_KEY)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val userLogin = binding.userLoginEditText
+        userLogin.text.append(userDisplayName)
+        val userPasswd = binding.userPasswdEditText
+        val userConformPasswd = binding.userPasswdConfirmEditText
+        val userAvatarButton = binding.userAvatarImageButton
+        val registrationButton = binding.registrationButton
 
-        val loginId = arguments?.getParcelable<Login>(AndroidUtils.LOGIN_KEY)?.userId
-
-        loginViewModel.loginLiveData.map { logins ->
-            logins.find { it.userId == loginId }
-        }.observe(viewLifecycleOwner) { login ->
-            login ?: kotlin.run {
-                findNavController().navigateUp()
-                return@observe
+        val afterTextChangedListener = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+                // ignore
             }
-            binding.apply {
-                val userLogin = binding.userLoginEditText
-                val userPasswd = binding.userPasswdEditText
-                val userConformPasswd = binding.userPasswdConfirmEditText
-                val userAvatarButton = binding.userAvatarImageButton
-                val registrationButton = binding.registrationButton
 
-                val login : Login? = arguments?.getParcelable<Login>(AndroidUtils.LOGIN_KEY)
-                arguments?.remove(AndroidUtils.LOGIN_KEY)
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                // ignore
+            }
 
-                with(binding.userLoginEditText) {
-                    if (login != null) {
-                        text.append(login.displayName)
-                    } else {
-                        text.append("")
-                    }
+            override fun afterTextChanged(s: Editable) {
+                loginViewModel.regPasswdConfirm(
+                    userLogin.text.toString(),
+                    userPasswd.text.toString(),
+                    userConformPasswd.text.toString())
+            }
+        }
+        userLogin.addTextChangedListener(afterTextChangedListener)
+        userPasswd.addTextChangedListener(afterTextChangedListener)
+        userConformPasswd.addTextChangedListener(afterTextChangedListener)
+        userAvatarButton.setOnClickListener {
+            val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            if (callCameraIntent.resolveActivity(requireContext().packageManager) != null) {
+                startActivityForResult(callCameraIntent, CAMERA_REQUEST_CODE)
+            }
+
+            Toast.makeText(context, "Clicked on avatar",Toast.LENGTH_SHORT).show()
+        }
+
+        loginViewModel.passwdResult.observe(viewLifecycleOwner) {
+            when (it) {
+                PasswdResult.PasswordNotEntered -> {
+                    registrationButton.isEnabled = false
                 }
-
-                with(binding.userPasswdEditText) {
-                    if (login != null) {
-                        text.append(login.passwd)
-                    } else {
-                        text.append("")
-                    }
+                PasswdResult.PasswordsNotMach -> {
+                    registrationButton.isEnabled = false
                 }
-
-                loginViewModel.passwdFormState.observe(viewLifecycleOwner,
-                    Observer { passwdFormState ->
-                        if (passwdFormState == null) {
-                            return@Observer
-                        }
-                        registrationButton.isEnabled = passwdFormState.isDataValid
-                        passwdFormState.passwordConfirmError?.let {
-                            userConformPasswd.error = getString(it)
-                        }
-                    })
-
-                loginViewModel.passwdResult.observe(viewLifecycleOwner,
-                    Observer { passwdResult ->
-                        passwdResult ?: return@Observer
-                        passwdResult.error?.let {
-                            showPasswdConfirmFailed(it)
-                        }
-                        passwdResult.success?.let {
-                            updatePasswdConfirm(it)
-                        }
-
-                    }
-                )
-
-                val afterTextChangedListener = object : TextWatcher {
-                    override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                        // ignore
-                    }
-
-                    override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                        // ignore
-                    }
-
-                    override fun afterTextChanged(s: Editable) {
-                        loginViewModel.regPasswdConfirmDataChange(
-                            userPasswd.text.toString(),
-                            userConformPasswd.text.toString()
-                        )
-                    }
-                }
-                userConformPasswd.addTextChangedListener(afterTextChangedListener)
-
-                registrationButton.setOnClickListener {
-                    loginViewModel.saveLogin()
-                    AndroidUtils.hideKeyboard(binding.root)
-                    findNavController().navigate(
-                        R.id.action_userRegistrationFragment_to_feedFragment,
-                        bundleOf(AndroidUtils.LOGIN_KEY to login)
-                    )
+                is PasswdResult.Success -> {
+                    Login(0L, userLogin.text.toString(), userPasswd.text.toString(), "")
+                    registrationButton.isEnabled = true
                 }
             }
         }
 
+        registrationButton.setOnClickListener {
+            val login = if (binding.userLoginEditText.text.isNotBlank() && binding.userPasswdEditText.text.isNotBlank()) {
+                loginViewModel.edited.value?.copy(
+                    displayName = userLogin.text.toString(),
+                    passwd = userPasswd.text.toString(),
+                    avatar = ""
+                )
+                } else {
+                    loginViewModel.edited.value.let { login ->
+                    if (login?.userId == 0L) login else return@setOnClickListener
+                    }
+                }
+
+            if (login != null) {
+                loginViewModel.loginChanged(login)
+            }
+            loginViewModel.saveLogin()
+            AndroidUtils.hideKeyboard(binding.root)
+            findNavController().navigate(
+                R.id.action_userRegistrationFragment_to_feedFragment,
+                bundleOf(AndroidUtils.LOGIN_KEY to login)
+            )
+        }
+
+        return binding.root
     }
 
-    private fun updatePasswdConfirm(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome) + model.displayName
-        // TODO : initiate successful logged in experience
-        val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
-    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            CAMERA_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    avatarImageView.setImageBitmap(data.extras?.get("data") as Bitmap)
+                }
 
-    private fun showPasswdConfirmFailed(@StringRes errorString: Int) {
-        val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, errorString, Toast.LENGTH_LONG).show()
+            }
+            else -> {
+                Toast.makeText(context, "Unrecognized request code", Toast.LENGTH_SHORT)
+            }
+        }
     }
-
 }

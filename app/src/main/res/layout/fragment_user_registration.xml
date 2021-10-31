@@ -12,25 +12,21 @@
         android:id="@+id/userLoginForm"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="72dp">
+        android:layout_marginBottom="80dp">
 
         <ImageButton
             android:id="@+id/user_avatar_image_button"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="fitXY"
-            android:background="@android:color/transparent"
+            style="@style/UserAvatar"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/userLoginEditText"
             android:src="@mipmap/ic_default_avatar"
-
-        />
+            />
 
         <EditText
             android:id="@+id/userLoginEditText"
-            style="@style/RegistrationView"
+            style="@style/RegistrationLogin"
             app:layout_constraintTop_toBottomOf="@id/user_avatar_image_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,7 +35,7 @@
 
         <EditText
             android:id="@+id/userPasswdEditText"
-            style="@style/RegistrationView"
+            style="@style/RegistrationPasswords"
             app:layout_constraintTop_toBottomOf="@id/userLoginEditText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -48,7 +44,7 @@
 
         <EditText
             android:id="@+id/userPasswdConfirmEditText"
-            style="@style/RegistrationView"
+            style="@style/RegistrationPasswords"
             app:layout_constraintTop_toBottomOf="@id/userPasswdEditText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

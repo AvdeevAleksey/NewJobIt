@@ -29,7 +29,7 @@ interface LoginDao {
     fun updateLoginById(id: Long, displayName: String, passwd: String, avatar: String)
 
     fun saveLogin(loginEntity: LoginEntity) =
-        if (loginEntity.userId == 0L && loginEntity.displayName != getLoginById(getLoginIdByDisplayName(loginEntity.displayName)).displayName)
+        if (loginEntity.userId == 0L && !userLoggedIn(loginEntity.displayName,loginEntity.passwd))
             insert(loginEntity)
         else updateLoginById(loginEntity.userId, loginEntity.displayName, loginEntity.passwd, loginEntity.avatar)
 }
