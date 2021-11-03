@@ -1,12 +1,9 @@
 package ru.netology.newjobit.viewmodel
 
 import android.app.Application
-import android.provider.ContactsContract.CommonDataKinds.*
 import android.util.Patterns
 import androidx.lifecycle.*
 import ru.netology.newjobit.R
-import ru.netology.newjobit.model.LoginDataSource
-import ru.netology.newjobit.model.Result
 import ru.netology.newjobit.repository.LoginRepositoryRoom
 import ru.netology.newjobit.model.db.AppDb
 import ru.netology.newjobit.model.dto.Login
@@ -23,7 +20,7 @@ private val empty = Login(
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val loginRepository: LoginRepository = LoginRepositoryRoom(
-        AppDb.getInstance(application).loginDao(),LoginDataSource()
+        AppDb.getInstance(application).loginDao()
     )
 
     val loginLiveData = loginRepository.getAll()
@@ -47,14 +44,15 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun login(username: String, password: String) {
-        val login = loginRepository.getAll().value.orEmpty().find { login ->
-            login.displayName == username
-        }
+//        val login = loginRepository.getAll().value.orEmpty().find { login ->
+//            login.displayName == username
+//        }
+        val login = loginRepository.login(username, password)
 
         editedLoginResult.value = when {
-            login == null -> LoginResult.UserNotFound
+            login.userId == 0L -> LoginResult.UserNotFound
             login.passwd != password -> LoginResult.IncorrectPassword
-            else -> LoginResult.Success(LoggedInUserView(username))
+            else -> LoginResult.Success(LoggedInUserView(username, password))
         }
     }
 
@@ -87,7 +85,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         editedPasswordResult.value = when {
             passwd == null -> PasswdResult.PasswordNotEntered
             passwd != passwdConfirm -> PasswdResult.PasswordsNotMach
-            else -> PasswdResult.Success(LoggedInUserView(username))
+            else -> PasswdResult.Success(LoggedInUserView(username,passwd))
         }
     }
 

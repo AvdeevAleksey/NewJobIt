@@ -1,10 +1,16 @@
 package ru.netology.newjobit.model.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.model.dto.Post
 
+//@Entity(foreignKeys = [ForeignKey(entity = LoginEntity::class,
+//            parentColumns = arrayOf("userId"),
+//            childColumns = arrayOf("author")
+//        )]
+//)
 @Entity
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)

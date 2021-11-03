@@ -10,12 +10,15 @@ import androidx.navigation.fragment.findNavController
 import ru.netology.newjobit.databinding.FragmentPostBinding
 import ru.netology.newjobit.model.dto.Post
 import ru.netology.newjobit.utils.AndroidUtils
+import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
 import ru.netology.newjobit.utils.AndroidUtils.POST_KEY
+import ru.netology.newjobit.viewmodel.LoginViewModel
 import ru.netology.newjobit.viewmodel.PostViewModel
 
 class PostFragment : Fragment() {
 
-    private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val postViewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val loginViewModel: LoginViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,7 +29,19 @@ class PostFragment : Fragment() {
         binding.editPostContent.requestFocus()
 
         val post : Post? = arguments?.getParcelable<Post>(POST_KEY)
+        val login = loginViewModel.loginLiveData.value?.find {
+            it.displayName == post?.author
+        }
         arguments?.remove(POST_KEY)
+        arguments?.remove(LOGIN_KEY)
+
+        loginViewModel.loginLiveData.observe(viewLifecycleOwner) {
+            binding.root
+        }
+
+        postViewModel.postLiveData.observe(viewLifecycleOwner) {
+            binding.root
+        }
 
         with(binding.editPostContent) {
             if (post != null && post.content.isNotBlank()) {
@@ -39,8 +54,10 @@ class PostFragment : Fragment() {
         binding.fabOk.setOnClickListener {
             if (!binding.editPostContent.text.isNullOrBlank()) {
                 val content = binding.editPostContent.text.toString()
-                viewModel.changeContent(content)
-                viewModel.savePost()
+                if (login != null) {
+                    postViewModel.changeContent(login.displayName,content)
+                }
+                postViewModel.savePost()
             }
             AndroidUtils.hideKeyboard(binding.root)
             findNavController().navigateUp()

@@ -1,13 +1,8 @@
 package ru.netology.newjobit.view.activity
 
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Build
-import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
@@ -16,50 +11,39 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.annotation.StringRes
-import androidx.constraintlayout.widget.ConstraintLayout.VERSION
-import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.map
 import ru.netology.newjobit.databinding.FragmentUserRegistrationBinding
 import ru.netology.newjobit.viewmodel.LoginViewModel
-import androidx.lifecycle.Observer
-import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_card_post.*
-import kotlinx.android.synthetic.main.fragment_login.*
 import ru.netology.newjobit.R
 import ru.netology.newjobit.model.dto.Login
-import ru.netology.newjobit.model.dto.Post
 import ru.netology.newjobit.utils.AndroidUtils
 import ru.netology.newjobit.utils.AndroidUtils.CAMERA_REQUEST_CODE
-import ru.netology.newjobit.view.activity.ui.login.LoggedInUserView
 import ru.netology.newjobit.view.activity.ui.login.PasswdResult
-import ru.netology.newjobit.view.adapter.countMyClick
-import java.io.File
-import java.util.jar.Manifest
 
 class UserRegistrationFragment : Fragment() {
 
-    private var myBinding: FragmentUserRegistrationBinding? = null
+//    private var myBinding: FragmentUserRegistrationBinding? = null
     private val loginViewModel: LoginViewModel by viewModels(ownerProducer = ::requireParentFragment)
-    private val binding get() = myBinding!!
+//    private val binding get() = myBinding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        myBinding = FragmentUserRegistrationBinding.inflate(inflater,container,false)
+        val binding = FragmentUserRegistrationBinding.inflate(inflater,container,false)
 
-        val userDisplayName = arguments?.getParcelable<Login>(AndroidUtils.LOGIN_KEY)?.displayName
+
+        val loginDisplayName = arguments?.getString(AndroidUtils.LOGIN_KEY)
         arguments?.remove(AndroidUtils.LOGIN_KEY)
 
         val userLogin = binding.userLoginEditText
-        userLogin.text.append(userDisplayName)
+        if (!loginDisplayName.isNullOrEmpty()) userLogin.text.append(loginDisplayName)
         val userPasswd = binding.userPasswdEditText
         val userConformPasswd = binding.userPasswdConfirmEditText
         val userAvatarButton = binding.userAvatarImageButton
@@ -102,34 +86,47 @@ class UserRegistrationFragment : Fragment() {
                     registrationButton.isEnabled = false
                 }
                 is PasswdResult.Success -> {
-                    Login(0L, userLogin.text.toString(), userPasswd.text.toString(), "")
+                    loginViewModel.loginLiveData.observe(viewLifecycleOwner){
+                        binding.root
+                    }
                     registrationButton.isEnabled = true
                 }
             }
         }
 
+        loginViewModel.loginLiveData.observe(viewLifecycleOwner){
+            binding.root
+        }
+
         registrationButton.setOnClickListener {
-            val login = if (binding.userLoginEditText.text.isNotBlank() && binding.userPasswdEditText.text.isNotBlank()) {
-                loginViewModel.edited.value?.copy(
+//            val login = if (userLogin.text.isNotBlank() && userPasswd.text.isNotBlank()) {
+//                loginViewModel.edited.value?.copy(
+//                    displayName = userLogin.text.toString(),
+//                    passwd = userPasswd.text.toString(),
+//                    avatar = ""
+//                )
+//                } else {
+//                    loginViewModel.edited.value?.let { login ->
+//                    if (login.userId == 0L) login else return@setOnClickListener
+//                    }
+//                }
+
+            val login = Login(
+                    userId = 0L,
                     displayName = userLogin.text.toString(),
                     passwd = userPasswd.text.toString(),
                     avatar = ""
-                )
-                } else {
-                    loginViewModel.edited.value.let { login ->
-                    if (login?.userId == 0L) login else return@setOnClickListener
-                    }
-                }
-
+            )
             if (login != null) {
                 loginViewModel.loginChanged(login)
             }
             loginViewModel.saveLogin()
-            AndroidUtils.hideKeyboard(binding.root)
-            findNavController().navigate(
-                R.id.action_userRegistrationFragment_to_feedFragment,
-                bundleOf(AndroidUtils.LOGIN_KEY to login)
-            )
+            if (login != null) {
+                findNavController().navigate(
+                    R.id.action_userRegistrationFragment_to_loginFragment,
+                    bundleOf(AndroidUtils.LOGIN_KEY to login)
+                )
+            }
         }
 
         return binding.root

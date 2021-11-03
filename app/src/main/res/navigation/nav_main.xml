@@ -61,7 +61,7 @@
         android:label="user_registration_fragment"
         tools:layout="@layout/fragment_user_registration" >
         <action
-            android:id="@+id/action_userRegistrationFragment_to_feedFragment"
-            app:destination="@id/feedFragment" />
+            android:id="@+id/action_userRegistrationFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

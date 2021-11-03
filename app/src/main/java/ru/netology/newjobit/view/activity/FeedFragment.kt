@@ -18,12 +18,13 @@ import ru.netology.newjobit.utils.AndroidUtils.POST_KEY
 import ru.netology.newjobit.viewmodel.PostViewModel
 import ru.netology.newjobit.R
 import ru.netology.newjobit.databinding.FragmentFeedBinding
-import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.utils.AndroidUtils
+import ru.netology.newjobit.viewmodel.LoginViewModel
 
 class FeedFragment : Fragment() {
 
-    private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val postViewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val loginViewModel: LoginViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -31,13 +32,19 @@ class FeedFragment : Fragment() {
             savedInstanceState: Bundle?
         ): View? {
 
-        val login = arguments?.getParcelable<Login>(AndroidUtils.LOGIN_KEY)
-        if (login != null) Toast.makeText(context,getString(R.string.welcome) + login?.displayName, Toast.LENGTH_SHORT).show()
+        val loginId = arguments?.getLong(AndroidUtils.LOGIN_KEY)
+        val login = loginViewModel.loginLiveData.value?.find {
+                it.userId == loginId
+                }
+
+        if (login != null) {
+            Toast.makeText(context,getString(R.string.welcome) + login.displayName, Toast.LENGTH_SHORT).show()
+        }
         arguments?.remove(AndroidUtils.LOGIN_KEY)
         val binding = FragmentFeedBinding.inflate(inflater,container,false)
         val postsAdapter = PostsAdapter (object : OnInteractionListener {
             override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
+                postViewModel.likeById(post.id)
             }
             override fun onShare(post: Post) {
                 val intent = Intent().apply {
@@ -48,20 +55,20 @@ class FeedFragment : Fragment() {
                 val shareIntent =
                         Intent.createChooser(intent,getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
-                viewModel.shareById(post.id)
+                postViewModel.shareById(post.id)
             }
             override fun onViewing(post: Post) {
-                viewModel.viewingById(post.id)
+                postViewModel.viewingById(post.id)
             }
             override fun onPostEdit(post: Post) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_postFragment,
                     bundleOf("post" to post)
                 )
-                viewModel.editPost(post)
+                postViewModel.editPost(post)
             }
             override fun onPostRemove(post: Post) {
-                viewModel.removeById(post.id)
+                postViewModel.removeById(post.id)
             }
             override fun onPlayVideo(post: Post) {
                 val intent = Intent().apply {
@@ -82,20 +89,21 @@ class FeedFragment : Fragment() {
 
         binding.rvPostRecyclerView.adapter = postsAdapter
 
-        viewModel.postLiveData.observe(viewLifecycleOwner) { posts ->
+        postViewModel.postLiveData.observe(viewLifecycleOwner) { posts ->
             postsAdapter.submitList(posts)
         }
 
-        viewModel.edited.observe(viewLifecycleOwner) { post ->
+        postViewModel.edited.observe(viewLifecycleOwner) { post ->
             if (post.id == 0L) {
                 return@observe
             }
         }
 
         binding.fabAddPost.setOnClickListener {
-            val post: Post = viewModel.edited.value.let { post ->
-                if (post?.id == 0L) post.copy(author = login!!.displayName) else return@setOnClickListener
-            }
+//            val post: Post = viewModel.edited.value.let { post ->
+//                if (post?.id == 0L) post.copy(author = login?.displayName ?: "Anonymous") else return@setOnClickListener
+//            }
+            val post: Post? = postViewModel.edited.value?.copy(author = login?.displayName ?: "Anonymous")
             findNavController().navigate(
                 R.id.action_feedFragment_to_postFragment,
                 bundleOf(POST_KEY to post)

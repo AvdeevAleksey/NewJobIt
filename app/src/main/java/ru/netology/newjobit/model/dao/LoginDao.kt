@@ -22,7 +22,7 @@ interface LoginDao {
     @Query("SELECT userId FROM LoginEntity WHERE displayName = :displayName")
     fun getLoginIdByDisplayName(displayName: String): Long
 
-    @Query("SELECT displayName AND passwd FROM LoginEntity WHERE displayName = :displayName AND passwd = :passwd")
+    @Query("SELECT * FROM LoginEntity WHERE displayName LIKE :displayName AND passwd LIKE :passwd")
     fun userLoggedIn(displayName: String, passwd: String): Boolean
 
     @Query("UPDATE LoginEntity SET displayName = :displayName, passwd = :passwd, avatar = :avatar WHERE userId = :id")

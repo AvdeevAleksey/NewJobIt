@@ -13,6 +13,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -38,9 +40,20 @@ class LoginFragment : Fragment() {
     ): View? {
         val binding = FragmentLoginBinding.inflate(inflater,container,false)
 
+        val loginDisplayName = arguments?.getParcelable<Login>(LOGIN_KEY)?.displayName
+        val login = loginViewModel.loginLiveData.value?.find {
+            it.displayName == loginDisplayName
+        }
+        arguments?.remove(LOGIN_KEY)
+
         val usrLoginEditText = binding.usernameEditText
         val passwdEditText = binding.passwordEditText
         val singInButton = binding.loginAndRegisterButton
+        if (login != null) {
+            usrLoginEditText.append(login.displayName)
+            passwdEditText.append(login.passwd)
+        }
+
         singInButton.isEnabled = true
 
         val afterTextChangedListener = object : TextWatcher {
@@ -62,26 +75,35 @@ class LoginFragment : Fragment() {
         usrLoginEditText.addTextChangedListener(afterTextChangedListener)
         passwdEditText.addTextChangedListener(afterTextChangedListener)
 
-        loginViewModel.loginResult.observe(viewLifecycleOwner) {
+
+
+        loginViewModel.loginResult.observe(viewLifecycleOwner) { it ->
             when (it) {
                 LoginResult.IncorrectPassword -> {
                     Toast.makeText(requireContext(),R.string.incorrect_password,Toast.LENGTH_LONG).show()
                 }
                 is LoginResult.Success -> {
+
+                    val loginId: Long = loginViewModel.loginLiveData.value?.find {
+                        it.displayName == usrLoginEditText.text.toString()
+                    }?.userId ?: 0L
                     findNavController().navigate(
                         R.id.action_loginFragment_to_feedFragment,
-                        bundleOf(LOGIN_KEY to usrLoginEditText.text.toString())
+                        bundleOf(LOGIN_KEY to loginId)
                     )
                 }
                 LoginResult.UserNotFound -> {
                     Toast.makeText(requireContext(),"User not found",Toast.LENGTH_LONG).show()
-                    val login = loginViewModel.edited.value?.copy(displayName = usrLoginEditText.text.toString())
                     findNavController().navigate(
                         R.id.action_loginFragment_to_userRegistrationFragment,
-                        bundleOf(LOGIN_KEY to login)
+                        bundleOf(LOGIN_KEY to usrLoginEditText.text.toString())
                     )
                 }
             }
+        }
+
+        loginViewModel.loginLiveData.observe(viewLifecycleOwner) {
+            binding.root
         }
 
         singInButton.setOnClickListener {
@@ -92,17 +114,5 @@ class LoginFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome) + model.displayName
-        // TODO : initiate successful logged in experience
-        val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, welcome, Toast.LENGTH_LONG).show()
-    }
-
-    private fun showLoginFailed(@StringRes errorString: Int) {
-        val appContext = context?.applicationContext ?: return
-        Toast.makeText(appContext, errorString, Toast.LENGTH_LONG).show()
     }
 }
