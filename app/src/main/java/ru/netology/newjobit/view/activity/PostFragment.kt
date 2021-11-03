@@ -55,7 +55,7 @@ class PostFragment : Fragment() {
             if (!binding.editPostContent.text.isNullOrBlank()) {
                 val content = binding.editPostContent.text.toString()
                 if (login != null) {
-                    postViewModel.changeContent(login.displayName,content)
+                    postViewModel.changeContent(login.avatar,login.displayName,content)
                 }
                 postViewModel.savePost()
             }

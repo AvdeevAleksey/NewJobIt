@@ -1,7 +1,5 @@
 package ru.netology.newjobit.view.activity
 
-import androidx.lifecycle.Observer
-import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
@@ -9,22 +7,15 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.android.synthetic.main.fragment_user_registration.*
 import ru.netology.newjobit.R
 import ru.netology.newjobit.databinding.FragmentLoginBinding
 import ru.netology.newjobit.model.dto.Login
-import ru.netology.newjobit.utils.AndroidUtils
 import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
-import ru.netology.newjobit.view.activity.ui.login.LoggedInUserView
 import ru.netology.newjobit.view.activity.ui.login.LoginResult
 import ru.netology.newjobit.viewmodel.LoginViewModel
 
@@ -40,6 +31,10 @@ class LoginFragment : Fragment() {
     ): View? {
         val binding = FragmentLoginBinding.inflate(inflater,container,false)
 
+        loginViewModel.loginLiveData.observe(viewLifecycleOwner){
+            binding.root
+        }
+
         val loginDisplayName = arguments?.getParcelable<Login>(LOGIN_KEY)?.displayName
         val login = loginViewModel.loginLiveData.value?.find {
             it.displayName == loginDisplayName
@@ -54,7 +49,6 @@ class LoginFragment : Fragment() {
             passwdEditText.append(login.passwd)
         }
 
-        singInButton.isEnabled = true
 
         val afterTextChangedListener = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -70,6 +64,7 @@ class LoginFragment : Fragment() {
                     usernameEditText.text.toString(),
                     passwordEditText.text.toString()
                 )
+                singInButton.isEnabled = true
             }
         }
         usrLoginEditText.addTextChangedListener(afterTextChangedListener)
@@ -100,10 +95,6 @@ class LoginFragment : Fragment() {
                     )
                 }
             }
-        }
-
-        loginViewModel.loginLiveData.observe(viewLifecycleOwner) {
-            binding.root
         }
 
         singInButton.setOnClickListener {

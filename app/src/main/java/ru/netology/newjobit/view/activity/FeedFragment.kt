@@ -103,7 +103,7 @@ class FeedFragment : Fragment() {
 //            val post: Post = viewModel.edited.value.let { post ->
 //                if (post?.id == 0L) post.copy(author = login?.displayName ?: "Anonymous") else return@setOnClickListener
 //            }
-            val post: Post? = postViewModel.edited.value?.copy(author = login?.displayName ?: "Anonymous")
+            val post: Post? = postViewModel.edited.value?.copy(avatar = login?.avatar ?: "", author = login?.displayName ?: "Anonymous")
             findNavController().navigate(
                 R.id.action_feedFragment_to_postFragment,
                 bundleOf(POST_KEY to post)

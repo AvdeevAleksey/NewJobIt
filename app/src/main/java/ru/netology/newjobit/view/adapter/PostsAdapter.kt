@@ -53,6 +53,7 @@ class PostViewHolder(
 ) : RecyclerView.ViewHolder(binding.root)  {
     fun bind(post: Post) {
         binding.apply {
+            if (post.avatar.isNotBlank()) avatarImageView.setImageURI(Uri.parse(post.avatar))
             authorTextView.text = post.author
             publishedTextView.text = post.published
             contentTextView.text = post.content

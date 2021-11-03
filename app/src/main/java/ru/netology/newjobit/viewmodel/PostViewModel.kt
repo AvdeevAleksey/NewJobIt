@@ -5,9 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import ru.netology.newjobit.model.db.AppDb
 import ru.netology.newjobit.model.dto.Post
-import ru.netology.newjobit.model.entity.LoginEntity
-import ru.netology.newjobit.repository.LoginRepository
-import ru.netology.newjobit.repository.LoginRepositoryRoom
 import ru.netology.newjobit.repository.PostRepository
 import ru.netology.newjobit.repository.PostRepositoryRoomImpl
 import java.text.SimpleDateFormat
@@ -17,6 +14,7 @@ import java.util.*
 private val simpleDateFormat = SimpleDateFormat("HH:mm:ss dd.MM.yyyy")
 private val empty = Post(
     id = 0L,
+    avatar = "",
     author = "Me",
     published = simpleDateFormat.format(Calendar.getInstance().time).toString(),
     content = "",
@@ -24,7 +22,7 @@ private val empty = Post(
     likesCount = 0,
     shareCount = 0,
     viewingCount = 0,
-    likedByMe = false
+    likedByMe = false,
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -48,13 +46,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = post
     }
 
-    fun changeContent(author: String, content: String) {
+    fun changeContent(avatar: String, author: String, content: String) {
         edited.value?.let {
             val text = content.trim()
             if (it.content == text) {
                 return
             }
-            edited.value = it.copy(author = author, content = text)
+            if (avatar.isNotBlank())
+            edited.value = it.copy(avatar = avatar, author = author, content = text)
+            else edited.value = it.copy(author = author, content = text)
         }
     }
 }
