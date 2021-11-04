@@ -1,6 +1,7 @@
 package ru.netology.newjobit.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import ru.netology.newjobit.model.db.AppDb

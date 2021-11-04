@@ -1,11 +1,11 @@
 package ru.netology.newjobit.repository
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import ru.netology.newjobit.model.dao.LoginDao
 import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.model.entity.LoginEntity
-import ru.netology.newjobit.view.activity.ui.login.LoginResult
 
 /**
  * Class that requests authentication and user information from the remote data source and

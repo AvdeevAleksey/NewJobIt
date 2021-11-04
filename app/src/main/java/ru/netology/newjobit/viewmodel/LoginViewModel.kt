@@ -72,7 +72,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             edited.value?.let {
                 val username = login.displayName.trim()
                 val passwd = login.passwd.trim()
-                val avatar = login.avatar.trim()
+                val avatar = login.avatar
                 if (it.displayName == username && it.passwd == passwd) {
                     return
                 }
@@ -80,6 +80,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+
 
     fun regPasswdConfirm(username: String, passwd: String, passwdConfirm: String ) {
         editedPasswordResult.value = when {

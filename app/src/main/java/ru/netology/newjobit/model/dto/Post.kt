@@ -15,7 +15,7 @@ data class Post(
         val viewingCount: Int,
         val likedByMe: Boolean = false
 ): Parcelable {
-        constructor(parcel: Parcel) : this(
+                constructor(parcel: Parcel) : this(
                 parcel.readLong(),
                 requireNotNull(parcel.readString()),
                 requireNotNull(parcel.readString()),
@@ -55,4 +55,5 @@ data class Post(
                         return arrayOfNulls(size)
                 }
         }
+
 }

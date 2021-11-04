@@ -22,7 +22,7 @@ import ru.netology.newjobit.viewmodel.PostViewModel
 
 class CardPostFragment : Fragment() {
 
-    private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val postViewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +34,7 @@ class CardPostFragment : Fragment() {
 
         val postId = arguments?.getParcelable<Post>(AndroidUtils.POST_KEY)?.id
 
-        viewModel.postLiveData.map { posts ->
+        postViewModel.postLiveData.map { posts ->
             posts.find { it.id == postId }
         }.observe(viewLifecycleOwner) { post ->
             post ?: run {
@@ -43,6 +43,7 @@ class CardPostFragment : Fragment() {
             }
 
             binding.apply {
+                if (!post.avatar.isNullOrBlank()) avatarImageView.setImageURI(Uri.parse(post.avatar))
                 authorTextView.text = post.author
                 publishedTextView.text = post.published
                 contentTextView.text = post.content
@@ -60,7 +61,7 @@ class CardPostFragment : Fragment() {
                     playVideo(post)
                 }
                 likeImageButton.setOnClickListener {
-                    viewModel.likeById(post.id)
+                    postViewModel.likeById(post.id)
                 }
                 shareImageButton.setOnClickListener {
                     val intent = Intent().apply {
@@ -72,10 +73,10 @@ class CardPostFragment : Fragment() {
                         Intent.createChooser(intent, getString(R.string.chooser_share_post))
                     startActivity(shareIntent)
 
-                    viewModel.shareById(post.id)
+                    postViewModel.shareById(post.id)
                 }
                 viewsImageButton.setOnClickListener {
-                    viewModel.viewingById(post.id)
+                    postViewModel.viewingById(post.id)
                 }
                 postMenuImageView.setOnClickListener {
                     PopupMenu(it.context, it).apply {
@@ -83,7 +84,7 @@ class CardPostFragment : Fragment() {
                         setOnMenuItemClickListener { item ->
                             when (item.itemId) {
                                 R.id.postRemove -> {
-                                    viewModel.removeById(post.id)
+                                    postViewModel.removeById(post.id)
                                     true
                                 }
                                 R.id.postEdit -> {
@@ -91,7 +92,7 @@ class CardPostFragment : Fragment() {
                                         R.id.action_fragmentCardPost_to_postFragment,
                                         bundleOf(AndroidUtils.POST_KEY to post)
                                     )
-                                    viewModel.editPost(post)
+                                    postViewModel.editPost(post)
                                     true
                                 }
                                 else -> false

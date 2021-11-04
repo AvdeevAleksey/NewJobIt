@@ -1,5 +1,6 @@
 package ru.netology.newjobit.model.entity
 
+import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.newjobit.model.dto.Login
@@ -14,7 +15,7 @@ import ru.netology.newjobit.model.dto.Post
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
-    val avatar: String,
+    val avatar: String = "",
     val author: String,
     val published: String,
     val content: String,

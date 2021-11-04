@@ -34,21 +34,20 @@ class LoginFragment : Fragment() {
         loginViewModel.loginLiveData.observe(viewLifecycleOwner){
             binding.root
         }
-
-        val loginDisplayName = arguments?.getParcelable<Login>(LOGIN_KEY)?.displayName
+        val loginId = arguments?.getLong(LOGIN_KEY)
         val login = loginViewModel.loginLiveData.value?.find {
-            it.displayName == loginDisplayName
+            it.userId == loginId
         }
         arguments?.remove(LOGIN_KEY)
-
+        if (login != null) {
+            loginViewModel.login(
+                login.displayName,
+                login.passwd
+            )
+        }
         val usrLoginEditText = binding.usernameEditText
         val passwdEditText = binding.passwordEditText
         val singInButton = binding.loginAndRegisterButton
-        if (login != null) {
-            usrLoginEditText.append(login.displayName)
-            passwdEditText.append(login.passwd)
-        }
-
 
         val afterTextChangedListener = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -71,6 +70,12 @@ class LoginFragment : Fragment() {
         passwdEditText.addTextChangedListener(afterTextChangedListener)
 
 
+        singInButton.setOnClickListener {
+            loginViewModel.login(
+                usrLoginEditText.text.toString(),
+                passwdEditText.text.toString()
+            )
+        }
 
         loginViewModel.loginResult.observe(viewLifecycleOwner) { it ->
             when (it) {
@@ -97,12 +102,6 @@ class LoginFragment : Fragment() {
             }
         }
 
-        singInButton.setOnClickListener {
-            loginViewModel.login(
-                usrLoginEditText.text.toString(),
-                passwdEditText.text.toString()
-            )
-        }
 
         return binding.root
     }

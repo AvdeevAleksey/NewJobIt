@@ -2,9 +2,6 @@ package ru.netology.newjobit.model.dto
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.provider.ContactsContract.CommonDataKinds.*
-import kotlinx.android.parcel.Parcelize
-import java.net.PasswordAuthentication
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository
@@ -43,4 +40,5 @@ data class Login(
             return arrayOfNulls(size)
         }
     }
+
 }
