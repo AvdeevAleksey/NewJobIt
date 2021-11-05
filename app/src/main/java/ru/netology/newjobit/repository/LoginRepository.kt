@@ -6,6 +6,7 @@ import ru.netology.newjobit.model.dto.Login
 interface LoginRepository {
     fun getAll(): LiveData<List<Login>>
     fun login(username: String, password: String): Login
+    fun getLoginById(userId: Long): Login
     fun saveLogin(login: Login)
     fun logout()
 }

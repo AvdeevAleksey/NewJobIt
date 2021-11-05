@@ -18,6 +18,8 @@ import ru.netology.newjobit.view.adapter.countMyClick
 import ru.netology.newjobit.databinding.FragmentCardPostBinding
 import ru.netology.newjobit.model.dto.Post
 import ru.netology.newjobit.utils.AndroidUtils
+import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
+import ru.netology.newjobit.utils.AndroidUtils.POST_KEY
 import ru.netology.newjobit.viewmodel.PostViewModel
 
 class CardPostFragment : Fragment() {
@@ -32,8 +34,8 @@ class CardPostFragment : Fragment() {
 
         val binding = FragmentCardPostBinding.inflate(inflater, container, false)
 
-        val postId = arguments?.getParcelable<Post>(AndroidUtils.POST_KEY)?.id
-
+        val postId = arguments?.getParcelable<Post>(POST_KEY)?.id
+        val loginId = arguments?.getLong(LOGIN_KEY)?: 0L
         postViewModel.postLiveData.map { posts ->
             posts.find { it.id == postId }
         }.observe(viewLifecycleOwner) { post ->
@@ -90,7 +92,10 @@ class CardPostFragment : Fragment() {
                                 R.id.postEdit -> {
                                     findNavController().navigate(
                                         R.id.action_fragmentCardPost_to_postFragment,
-                                        bundleOf(AndroidUtils.POST_KEY to post)
+                                        bundleOf(
+                                            POST_KEY to post,
+                                            LOGIN_KEY to loginId
+                                        )
                                     )
                                     postViewModel.editPost(post)
                                     true

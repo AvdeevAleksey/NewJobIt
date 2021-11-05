@@ -1,7 +1,10 @@
 package ru.netology.newjobit.view.activity
 
+import android.Manifest
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +14,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
@@ -73,11 +78,19 @@ class UserRegistrationFragment : Fragment() {
         userPasswd.addTextChangedListener(afterTextChangedListener)
         userConformPasswd.addTextChangedListener(afterTextChangedListener)
         userAvatarButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, REQUEST_CODE)
+            val permissionStatus =
+                this.context?.let { ContextCompat.checkSelfPermission(it,READ_EXTERNAL_STORAGE) }
 
-            Toast.makeText(context, "Clicked on avatar",Toast.LENGTH_SHORT).show()
+            if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(context, "Clicked on avatar",Toast.LENGTH_SHORT).show()
+                val intent = Intent(Intent.ACTION_PICK)
+                intent.type = "image/*"
+                startActivityForResult(intent, REQUEST_CODE)
+            } else {
+                ActivityCompat.requestPermissions(
+                    context as Activity, arrayOf(READ_EXTERNAL_STORAGE),
+                    REQUEST_CODE)
+            }
         }
 
         loginViewModel.passwdResult.observe(viewLifecycleOwner) {
@@ -98,28 +111,29 @@ class UserRegistrationFragment : Fragment() {
         }
 
         registrationButton.setOnClickListener {
-            loginViewModel.loginChanged(Login(
-                    userId = 0L,
-                    displayName = userLogin.text.toString(),
-                    passwd = userPasswd.text.toString(),
-                    avatar = imageAddress.toString()
-                )
+            val login = Login(
+                userId = 0L,
+                displayName = userLogin.text.toString(),
+                passwd = userPasswd.text.toString(),
+                avatar = if (imageAddress!=null) imageAddress.toString() else ""
             )
+            loginViewModel.loginChanged(login)
             loginViewModel.saveLogin()
-            loginViewModel.loginLiveData.value?.map {
-                it.userId != 0L
-            }
-
             imageAddress = null
-            val loginId = loginViewModel.loginLiveData.value?.find {
-                it.displayName == userLogin.text.toString()
-            }?.userId
             findNavController().navigate(
                 R.id.action_userRegistrationFragment_to_loginFragment,
-                bundleOf(LOGIN_KEY to loginId)
+                bundleOf(LOGIN_KEY to login)
             )
         }
         return binding.root
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

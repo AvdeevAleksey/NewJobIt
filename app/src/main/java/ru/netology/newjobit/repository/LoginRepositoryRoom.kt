@@ -27,15 +27,15 @@ class LoginRepositoryRoom(
     }
 
     override fun login(username: String, password: String): Login {
-        val loginEntity = if (loginDao.userLoggedIn(username, password)) {
-            loginDao.getLoginById(loginDao.getLoginIdByDisplayName(username))
-        } else LoginEntity(0L, username, "", "")
-        return Login(
-            loginEntity.userId,
-            loginEntity.displayName,
-            loginEntity.passwd,
-            loginEntity.avatar
-        )
+        return (if (loginDao.userLoggedIn(username, password)) {
+            loginDao.getLoginById(
+                loginDao.getLoginIdByDisplayName(username)
+            )
+        } else LoginEntity(0L, username, "", "")).toLoginIn()
+    }
+
+    override fun getLoginById(userId: Long): Login {
+        return loginDao.getLoginById(userId).toLoginIn()
     }
 
     override fun saveLogin(login: Login) {

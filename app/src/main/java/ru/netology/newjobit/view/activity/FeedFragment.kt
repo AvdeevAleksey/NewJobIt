@@ -18,7 +18,9 @@ import ru.netology.newjobit.utils.AndroidUtils.POST_KEY
 import ru.netology.newjobit.viewmodel.PostViewModel
 import ru.netology.newjobit.R
 import ru.netology.newjobit.databinding.FragmentFeedBinding
+import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.utils.AndroidUtils
+import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
 import ru.netology.newjobit.viewmodel.LoginViewModel
 
 class FeedFragment : Fragment() {
@@ -32,15 +34,17 @@ class FeedFragment : Fragment() {
             savedInstanceState: Bundle?
         ): View? {
 
-        val loginId = arguments?.getLong(AndroidUtils.LOGIN_KEY)
-        val login = loginViewModel.loginLiveData.value?.find {
+        val loginId = arguments?.getLong(LOGIN_KEY)?: 0L
+        val login = if (loginId != 0L) {
+            loginViewModel.loginLiveData.value?.find {
                 it.userId == loginId
-                }
+            } ?: loginViewModel.getLoginById(loginId)
+        } else loginViewModel.getLoginById(loginId)
 
-        if (login != null) {
+        if (login != null && login.userId != 0L) {
             Toast.makeText(context,getString(R.string.welcome) + login.displayName, Toast.LENGTH_SHORT).show()
         }
-        arguments?.remove(AndroidUtils.LOGIN_KEY)
+        arguments?.remove(LOGIN_KEY)
         val binding = FragmentFeedBinding.inflate(inflater,container,false)
         val postsAdapter = PostsAdapter (object : OnInteractionListener {
             override fun onLike(post: Post) {
@@ -82,7 +86,10 @@ class FeedFragment : Fragment() {
             override fun onPostOpen(post: Post) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_fragmentCardPost,
-                    bundleOf(POST_KEY to post)
+                    bundleOf(
+                        POST_KEY to post,
+                        LOGIN_KEY to loginId
+                    )
                 )
             }
         })
@@ -101,13 +108,25 @@ class FeedFragment : Fragment() {
 
         binding.fabAddPost.setOnClickListener {
             val post: Post = postViewModel.edited.value.let { post ->
-                if (post?.id == 0L) post.copy(avatar = login?.avatar ?: "", author = login?.displayName ?: "Anonymous") else return@setOnClickListener
+                if (post?.id == 0L) post.copy(avatar = login.avatar, author = login.displayName) else return@setOnClickListener
             }
             findNavController().navigate(
                 R.id.action_feedFragment_to_postFragment,
-                bundleOf(POST_KEY to post)
+                bundleOf(
+                    POST_KEY to post,
+                    LOGIN_KEY to login.userId
+                    )
             )
         }
         return binding.root
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
 }

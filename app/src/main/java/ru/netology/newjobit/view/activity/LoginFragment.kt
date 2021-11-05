@@ -1,5 +1,7 @@
 package ru.netology.newjobit.view.activity
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.content.pm.PackageManager
 import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.text.Editable
@@ -8,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,6 +21,7 @@ import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
 import ru.netology.newjobit.view.activity.ui.login.LoginResult
 import ru.netology.newjobit.viewmodel.LoginViewModel
+import java.util.jar.Manifest
 
 class LoginFragment : Fragment() {
 
@@ -30,24 +34,21 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = FragmentLoginBinding.inflate(inflater,container,false)
+        val usrLoginEditText = binding.usernameEditText
+        val passwdEditText = binding.passwordEditText
+        val singInButton = binding.loginAndRegisterButton
 
         loginViewModel.loginLiveData.observe(viewLifecycleOwner){
             binding.root
         }
-        val loginId = arguments?.getLong(LOGIN_KEY)
-        val login = loginViewModel.loginLiveData.value?.find {
-            it.userId == loginId
-        }
+
+        val login = arguments?.getParcelable<Login>(LOGIN_KEY)
         arguments?.remove(LOGIN_KEY)
         if (login != null) {
-            loginViewModel.login(
-                login.displayName,
-                login.passwd
-            )
+            usrLoginEditText.append(login.displayName)
+            passwdEditText.append(login.passwd)
+            loginViewModel.login(login.displayName, login.passwd)
         }
-        val usrLoginEditText = binding.usernameEditText
-        val passwdEditText = binding.passwordEditText
-        val singInButton = binding.loginAndRegisterButton
 
         val afterTextChangedListener = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -80,29 +81,33 @@ class LoginFragment : Fragment() {
         loginViewModel.loginResult.observe(viewLifecycleOwner) { it ->
             when (it) {
                 LoginResult.IncorrectPassword -> {
-                    Toast.makeText(requireContext(),R.string.incorrect_password,Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), R.string.incorrect_password, Toast.LENGTH_LONG)
+                        .show()
                 }
                 is LoginResult.Success -> {
-
                     val loginId: Long = loginViewModel.loginLiveData.value?.find {
                         it.displayName == usrLoginEditText.text.toString()
-                    }?.userId ?: 0L
-                    findNavController().navigate(
-                        R.id.action_loginFragment_to_feedFragment,
-                        bundleOf(LOGIN_KEY to loginId)
-                    )
-                }
+                    }?.userId
+                        ?: loginViewModel.getLoginId(
+                            usrLoginEditText.text.toString(),
+                            passwdEditText.text.toString()
+                        )
+
+                        findNavController().navigate(
+                            R.id.action_loginFragment_to_feedFragment,
+                            bundleOf(LOGIN_KEY to loginId)
+                        )
+                    }
+
                 LoginResult.UserNotFound -> {
-                    Toast.makeText(requireContext(),"User not found",Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "User not found", Toast.LENGTH_LONG).show()
                     findNavController().navigate(
                         R.id.action_loginFragment_to_userRegistrationFragment,
-                        bundleOf(LOGIN_KEY to usrLoginEditText.text.toString())
+                        bundleOf(LOGIN_KEY to binding.usernameEditText.text.toString())
                     )
                 }
             }
         }
-
-
         return binding.root
     }
 }

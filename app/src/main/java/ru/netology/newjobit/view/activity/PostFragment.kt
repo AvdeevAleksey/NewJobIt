@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import ru.netology.newjobit.R
 import ru.netology.newjobit.databinding.FragmentPostBinding
 import ru.netology.newjobit.model.dto.Post
 import ru.netology.newjobit.utils.AndroidUtils
@@ -29,19 +31,12 @@ class PostFragment : Fragment() {
         binding.editPostContent.requestFocus()
 
         val post : Post? = arguments?.getParcelable<Post>(POST_KEY)
+        val loginId = arguments?.getLong(LOGIN_KEY)?: 0L
         val login = loginViewModel.loginLiveData.value?.find {
             it.displayName == post?.author
-        }
+        }?: loginViewModel.getLoginById(loginId)
         arguments?.remove(POST_KEY)
         arguments?.remove(LOGIN_KEY)
-
-        loginViewModel.loginLiveData.observe(viewLifecycleOwner) {
-            binding.root
-        }
-
-        postViewModel.postLiveData.observe(viewLifecycleOwner) {
-            binding.root
-        }
 
         with(binding.editPostContent) {
             if (post != null && post.content.isNotBlank()) {
@@ -60,7 +55,10 @@ class PostFragment : Fragment() {
                 postViewModel.savePost()
             }
             AndroidUtils.hideKeyboard(binding.root)
-            findNavController().navigateUp()
+            findNavController().navigate(
+                R.id.action_postFragment_to_feedFragment,
+                bundleOf(LOGIN_KEY to loginId)
+            )
         }
         return binding.root
     }

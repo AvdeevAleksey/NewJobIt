@@ -56,6 +56,14 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun getLoginId(username: String, password: String): Long {
+        return loginRepository.login(username, password).userId
+    }
+
+    fun getLoginById(userId: Long) : Login {
+        return loginRepository.getLoginById(userId)
+    }
+
     fun accessVerification(username: String, password: String) {
         if (!isUserNameValid(username)) {
             editedLoginForm.value = LoginFormState(usernameError = R.string.invalid_username)
