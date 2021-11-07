@@ -50,7 +50,6 @@ class FeedFragment : Fragment() {
         if (login != null && login.userId != 0L) {
             Toast.makeText(context,getString(R.string.welcome) + login.displayName, Toast.LENGTH_SHORT).show()
         }
-        arguments?.remove(LOGIN_KEY)
         val binding = FragmentFeedBinding.inflate(inflater,container,false)
         val postsAdapter = PostsAdapter (object : OnInteractionListener {
             override fun onLike(post: Post) {
