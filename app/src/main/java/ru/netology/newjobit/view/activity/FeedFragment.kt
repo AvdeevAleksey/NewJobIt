@@ -1,14 +1,20 @@
 package ru.netology.newjobit.view.activity
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.newjobit.view.adapter.OnInteractionListener
@@ -65,14 +71,21 @@ class FeedFragment : Fragment() {
                 postViewModel.viewingById(post.id)
             }
             override fun onPostEdit(post: Post) {
+                if (post.author == login.displayName) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_postFragment,
-                    bundleOf("post" to post)
+                    bundleOf(
+                        POST_KEY to post,
+                        LOGIN_KEY to login.userId
+                    )
                 )
                 postViewModel.editPost(post)
+                } else Toast.makeText(context,getString(R.string.only_author_can_edit_post,post.author), Toast.LENGTH_LONG).show()
             }
             override fun onPostRemove(post: Post) {
+                if (post.author == login.displayName) {
                 postViewModel.removeById(post.id)
+                } else Toast.makeText(context,getString(R.string.only_author_can_delete_post,post.author), Toast.LENGTH_SHORT).show()
             }
             override fun onPlayVideo(post: Post) {
                 val intent = Intent().apply {
@@ -88,7 +101,7 @@ class FeedFragment : Fragment() {
                     R.id.action_feedFragment_to_fragmentCardPost,
                     bundleOf(
                         POST_KEY to post,
-                        LOGIN_KEY to loginId
+                        LOGIN_KEY to login.userId
                     )
                 )
             }

@@ -1,32 +1,44 @@
 package ru.netology.newjobit.view.activity
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import ru.netology.newjobit.R
 import ru.netology.newjobit.view.adapter.countMyClick
 import ru.netology.newjobit.databinding.FragmentCardPostBinding
+import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.model.dto.Post
-import ru.netology.newjobit.utils.AndroidUtils
 import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
 import ru.netology.newjobit.utils.AndroidUtils.POST_KEY
+import ru.netology.newjobit.viewmodel.LoginViewModel
 import ru.netology.newjobit.viewmodel.PostViewModel
 
 class CardPostFragment : Fragment() {
 
     private val postViewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+    private val loginViewModel: LoginViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
-    override fun onCreateView(
+        override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,6 +48,22 @@ class CardPostFragment : Fragment() {
 
         val postId = arguments?.getParcelable<Post>(POST_KEY)?.id
         val loginId = arguments?.getLong(LOGIN_KEY)?: 0L
+        val login = if (loginId != 0L) {
+            loginViewModel.loginLiveData.value?.find {
+                it.userId == loginId
+            } ?: loginViewModel.getLoginById(loginId)
+        } else loginViewModel.getLoginById(loginId)
+        arguments?.remove(POST_KEY)
+        val permissionStatus =
+            this.context?.let { ContextCompat.checkSelfPermission(it,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) }
+
+        if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                context as Activity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                REQUEST_CODE)
+        }
         postViewModel.postLiveData.map { posts ->
             posts.find { it.id == postId }
         }.observe(viewLifecycleOwner) { post ->
@@ -45,7 +73,7 @@ class CardPostFragment : Fragment() {
             }
 
             binding.apply {
-                if (!post.avatar.isNullOrBlank()) avatarImageView.setImageURI(Uri.parse(post.avatar))
+                Glide.with(avatarImageView).load(Uri.parse(post.avatar)).into(avatarImageView)
                 authorTextView.text = post.author
                 publishedTextView.text = post.published
                 contentTextView.text = post.content
@@ -86,29 +114,45 @@ class CardPostFragment : Fragment() {
                         setOnMenuItemClickListener { item ->
                             when (item.itemId) {
                                 R.id.postRemove -> {
-                                    postViewModel.removeById(post.id)
-                                    true
+                                    if (post.author == login.displayName) {
+                                        postViewModel.removeById(post.id)
+                                        true
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            getString(R.string.only_author_can_delete_post,post.author),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        false
+                                    }
                                 }
                                 R.id.postEdit -> {
-                                    findNavController().navigate(
-                                        R.id.action_fragmentCardPost_to_postFragment,
-                                        bundleOf(
-                                            POST_KEY to post,
-                                            LOGIN_KEY to loginId
+                                    if (post.author == login.displayName) {
+                                        findNavController().navigate(
+                                            R.id.action_fragmentCardPost_to_postFragment,
+                                            bundleOf(
+                                                POST_KEY to post,
+                                                LOGIN_KEY to loginId
+                                            )
                                         )
-                                    )
-                                    postViewModel.editPost(post)
-                                    true
+                                        postViewModel.editPost(post)
+                                        true
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            getString(R.string.only_author_can_edit_post,post.author),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        false
+                                    }
                                 }
                                 else -> false
                             }
-
                         }
                     }.show()
                 }
             }
         }
-
         return binding.root
     }
 

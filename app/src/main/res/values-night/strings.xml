@@ -24,4 +24,6 @@
     <string name="passwords_dont_empty">Password cannot be empty</string>
     <string name="enter_login">Enter login</string>
     <string name="enter_password">Enter password</string>
+    <string name="only_author_can_edit_post">Only the %1$s can edit the post</string>
+    <string name="only_author_can_delete_post">Only the %1$s can delete the post</string>
 </resources>

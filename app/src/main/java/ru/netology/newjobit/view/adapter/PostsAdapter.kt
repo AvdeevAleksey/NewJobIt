@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.netology.newjobit.R
 import ru.netology.newjobit.databinding.FragmentCardPostBinding
 import ru.netology.newjobit.model.dto.Post
@@ -53,7 +54,7 @@ class PostViewHolder(
 ) : RecyclerView.ViewHolder(binding.root)  {
     fun bind(post: Post) {
         binding.apply {
-            if (!post.avatar.isNullOrBlank()) avatarImageView.setImageURI(Uri.parse(post.avatar))
+            Glide.with(avatarImageView).load(Uri.parse(post.avatar)).into(avatarImageView)
             authorTextView.text = post.author
             publishedTextView.text = post.published
             contentTextView.text = post.content

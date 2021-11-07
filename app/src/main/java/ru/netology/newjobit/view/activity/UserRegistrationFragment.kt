@@ -23,6 +23,7 @@ import androidx.lifecycle.map
 import ru.netology.newjobit.databinding.FragmentUserRegistrationBinding
 import ru.netology.newjobit.viewmodel.LoginViewModel
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_user_registration.*
 import ru.netology.newjobit.R
 import ru.netology.newjobit.model.dto.Login
@@ -140,7 +141,7 @@ class UserRegistrationFragment : Fragment() {
 
         if (requestCode== REQUEST_CODE && resultCode == Activity.RESULT_OK){
             imageAddress = data?.data
-            userAvatarImageButton.setImageURI(imageAddress)
+            Glide.with(this).load(imageAddress).into(userAvatarImageButton)
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }

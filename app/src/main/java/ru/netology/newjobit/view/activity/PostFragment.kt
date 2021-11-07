@@ -33,7 +33,7 @@ class PostFragment : Fragment() {
         val post : Post? = arguments?.getParcelable<Post>(POST_KEY)
         val loginId = arguments?.getLong(LOGIN_KEY)?: 0L
         val login = loginViewModel.loginLiveData.value?.find {
-            it.displayName == post?.author
+            it.userId == loginId
         }?: loginViewModel.getLoginById(loginId)
         arguments?.remove(POST_KEY)
         arguments?.remove(LOGIN_KEY)
@@ -54,6 +54,7 @@ class PostFragment : Fragment() {
                 }
                 postViewModel.savePost()
             }
+            val loginId = login.userId
             AndroidUtils.hideKeyboard(binding.root)
             findNavController().navigate(
                 R.id.action_postFragment_to_feedFragment,
