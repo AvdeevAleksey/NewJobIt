@@ -80,9 +80,9 @@ class PostViewHolder(
             shareImageButton.setOnClickListener {
                 onInteractionListener.onShare(post)
             }
-            viewsImageButton.setOnClickListener {
-                onInteractionListener.onViewing(post)
-            }
+//            viewsImageButton.setOnClickListener {
+//                onInteractionListener.onViewing(post)
+//            }
             postMenuImageView.setOnClickListener {
                 PopupMenu(it.context,it).apply {
                     inflate(R.menu.options_post_menu)

@@ -52,18 +52,12 @@ class CardPostFragment : Fragment() {
             loginViewModel.loginLiveData.value?.find {
                 it.userId == loginId
             } ?: loginViewModel.getLoginById(loginId)
-        } else loginViewModel.getLoginById(loginId)
-        arguments?.remove(POST_KEY)
-        val permissionStatus =
-            this.context?.let { ContextCompat.checkSelfPermission(it,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) }
-
-        if (permissionStatus != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                context as Activity, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                REQUEST_CODE)
+        } else {
+            loginViewModel.getLoginById(loginId)
         }
+            if (postId != null) {
+                postViewModel.viewingById(postId)
+            }
         postViewModel.postLiveData.map { posts ->
             posts.find { it.id == postId }
         }.observe(viewLifecycleOwner) { post ->
@@ -105,9 +99,8 @@ class CardPostFragment : Fragment() {
 
                     postViewModel.shareById(post.id)
                 }
-                viewsImageButton.setOnClickListener {
-                    postViewModel.viewingById(post.id)
-                }
+//                viewsImageButton.setOnClickListener {
+//                    postViewModel.viewingById(post.id)
                 postMenuImageView.setOnClickListener {
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.options_post_menu)
