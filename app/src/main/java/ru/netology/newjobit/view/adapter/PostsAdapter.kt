@@ -34,6 +34,7 @@ class PostsAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         holder.bind(getItem(position))
+        onInteractionListener.onViewing(getItem(position))
     }
 
 }

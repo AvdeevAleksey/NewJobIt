@@ -1,6 +1,5 @@
 package ru.netology.newjobit.model.entity
 
-import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.newjobit.model.dto.Login
