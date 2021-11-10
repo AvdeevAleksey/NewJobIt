@@ -2,6 +2,7 @@ package ru.netology.newjobit.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.coroutines.joinAll
 import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.model.dto.Post
 
@@ -19,7 +20,7 @@ data class PostEntity(
     val published: String,
     val content: String,
     val videoInPost: String,
-    val likesCount: Int,
+    val likesCount: List<Long> ,
     val shareCount: Int,
     val viewingCount: Int,
     val likedByMe: Boolean
@@ -31,7 +32,7 @@ data class PostEntity(
         published,
         content,
         videoInPost,
-        likesCount,
+        likesCount as MutableList<Long>,
         shareCount,
         viewingCount,
         likedByMe,
