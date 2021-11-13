@@ -27,6 +27,8 @@ class PostsAdapter(
     private val onInteractionListener: OnInteractionListener
 ) : ListAdapter<Post, PostViewHolder>(PostDiffCallBack()) {
 
+    private var viewed: Boolean = false
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = FragmentCardPostBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return PostViewHolder(binding, onInteractionListener)
@@ -34,9 +36,11 @@ class PostsAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         holder.bind(getItem(position))
-        onInteractionListener.onViewing(getItem(position))
+        if (!viewed) {
+            onInteractionListener.onViewing(getItem(position))
+            viewed = true
+        }
     }
-
 }
 
 class PostDiffCallBack : DiffUtil.ItemCallback<Post>() {

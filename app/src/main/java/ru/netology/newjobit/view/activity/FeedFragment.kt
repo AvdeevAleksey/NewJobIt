@@ -109,7 +109,9 @@ class FeedFragment : Fragment() {
         binding.rvPostRecyclerView.adapter = postsAdapter
 
         postViewModel.postLiveData.observe(viewLifecycleOwner) { posts ->
-            postsAdapter.submitList(posts)
+            postsAdapter.submitList(posts.map { post ->
+                post.copy(likedByMe = post.likesCount.contains(login.userId))
+            })
         }
 
         postViewModel.edited.observe(viewLifecycleOwner) { post ->

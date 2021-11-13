@@ -1,8 +1,8 @@
 package ru.netology.newjobit.model.entity
 
+import androidx.lifecycle.LiveData
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.coroutines.joinAll
 import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.model.dto.Post
 
@@ -20,7 +20,7 @@ data class PostEntity(
     val published: String,
     val content: String,
     val videoInPost: String,
-    val likesCount: List<Long> ,
+    val likesCount: String,
     val shareCount: Int,
     val viewingCount: Int,
     val likedByMe: Boolean
@@ -32,7 +32,7 @@ data class PostEntity(
         published,
         content,
         videoInPost,
-        likesCount as MutableList<Long>,
+        mutableListOf(),
         shareCount,
         viewingCount,
         likedByMe,
@@ -47,11 +47,23 @@ data class PostEntity(
                 post.published,
                 post.content,
                 post.videoInPost,
-                post.likesCount,
+                post.likesCount.toString(),
                 post.shareCount,
                 post.viewingCount,
                 post.likedByMe,
             )
+    }
+}
+
+@Entity
+data class LikedEntity(
+    @PrimaryKey(autoGenerate = true)
+    val likeId: Long,
+    val postId: Long,
+    val loginId: Long
+) {
+    companion object {
+        fun fromLiked(postId: Long, loginId: Long): LikedEntity = LikedEntity(likeId = 0L, postId = postId,loginId = loginId)
     }
 }
 
