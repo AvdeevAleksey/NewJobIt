@@ -26,11 +26,15 @@ interface PostDao {
 
     @Query("""
         UPDATE PostEntity SET
-        likesCount = likesCount + CASE WHEN likedByMe THEN -1 ELSE 1 END,
+        likesCount = CASE WHEN likedByMe THEN CONCAT(
+                SUBSTRING_INDEX(likesCount,:userId,1),
+                "",
+                SUBSTRING(likesCount, LOCATE(',',likesCount,LOCATE(:userId,likesCount)))
+                ) ELSE CONCAT(likesCount,"," + :userId) END,
         likedByMe = CASE WHEN likedByMe THEN 0 ELSE 1 END
         WHERE id = :id
     """)
-    fun likeById(id: Long)
+    fun likeById(id: Long, userId: Long)
 
     @Query("""
         UPDATE PostEntity SET

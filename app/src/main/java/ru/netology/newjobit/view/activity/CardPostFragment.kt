@@ -1,24 +1,16 @@
 package ru.netology.newjobit.view.activity
 
-import android.Manifest
-import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
@@ -26,7 +18,6 @@ import com.bumptech.glide.Glide
 import ru.netology.newjobit.R
 import ru.netology.newjobit.view.adapter.countMyClick
 import ru.netology.newjobit.databinding.FragmentCardPostBinding
-import ru.netology.newjobit.model.dto.Login
 import ru.netology.newjobit.model.dto.Post
 import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
 import ru.netology.newjobit.utils.AndroidUtils.POST_KEY

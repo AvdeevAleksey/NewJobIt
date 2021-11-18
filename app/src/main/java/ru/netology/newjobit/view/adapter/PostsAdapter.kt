@@ -62,7 +62,7 @@ class PostViewHolder(
             shareImageButton.text = countMyClick(post.shareCount)
             viewsImageButton.text = countMyClick(post.viewingCount)
             likeImageButton.isChecked = post.likedByMe
-            likeImageButton.text = countMyClick(post.likesCount)
+            likeImageButton.text = countMyClick(post.likesCount.size)
             videoGroup.isVisible = post.videoInPost.isNotBlank()
 
             cardPost.setOnClickListener {

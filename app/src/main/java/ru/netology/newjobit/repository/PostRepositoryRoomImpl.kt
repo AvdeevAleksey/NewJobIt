@@ -16,8 +16,8 @@ class PostRepositoryRoomImpl(
         }
     }
 
-    override fun likeById(id: Long) {
-        postDao.likeById(id)
+    override fun likeById(id: Long, userId: Long) {
+        postDao.likeById(id,userId)
     }
 
     override fun shareById(id: Long) {

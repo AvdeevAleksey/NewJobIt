@@ -1,7 +1,6 @@
 package ru.netology.newjobit.viewmodel
 
 import android.app.Application
-import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import ru.netology.newjobit.model.db.AppDb
@@ -20,7 +19,7 @@ private val empty = Post(
     published = simpleDateFormat.format(Calendar.getInstance().time).toString(),
     content = "",
     videoInPost = "",
-    likesCount = 0,
+    likesCount = emptyList(),
     shareCount = 0,
     viewingCount = 0,
     likedByMe = false,
@@ -32,7 +31,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     )
     val postLiveData = postRepository.getAll()
     val edited = MutableLiveData(empty)
-    fun likeById(id: Long) = postRepository.likeById(id)
+    fun likeById(id: Long, userId: Long) = postRepository.likeById(id, userId)
     fun shareById(id: Long) = postRepository.shareById(id)
     fun viewingById(id: Long) = postRepository.viewingById(id)
     fun removeById(id: Long) = postRepository.removeById(id)

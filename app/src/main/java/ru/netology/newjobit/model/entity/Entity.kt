@@ -1,6 +1,5 @@
 package ru.netology.newjobit.model.entity
 
-import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.newjobit.model.dto.Login
@@ -20,7 +19,7 @@ data class PostEntity(
     val published: String,
     val content: String,
     val videoInPost: String,
-    val likesCount: Int,
+    val likesCount: String,
     val shareCount: Int,
     val viewingCount: Int,
     val likedByMe: Boolean
@@ -32,7 +31,7 @@ data class PostEntity(
         published,
         content,
         videoInPost,
-        likesCount,
+        likesCount.split(",").map { (it.trim()).toLong() },
         shareCount,
         viewingCount,
         likedByMe,
@@ -47,7 +46,7 @@ data class PostEntity(
                 post.published,
                 post.content,
                 post.videoInPost,
-                post.likesCount,
+                post.likesCount.joinToString(),
                 post.shareCount,
                 post.viewingCount,
                 post.likedByMe,
