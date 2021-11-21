@@ -9,6 +9,7 @@ import ru.netology.newjobit.model.dao.LikedDao
 import ru.netology.newjobit.model.dao.LoginDao
 import ru.netology.newjobit.model.entity.LikedEntity
 import ru.netology.newjobit.model.entity.PostEntity
+import ru.netology.newjobit.utils.AndroidUtils.mergeWith
 
 class PostRepositoryRoomImpl(
     private val postDao: PostDao,
@@ -18,16 +19,19 @@ class PostRepositoryRoomImpl(
     override fun getAll(): LiveData<List<Post>> = Transformations.map(postDao.getAll()) { list ->
         list.map { entity ->
             entity.toPost()
-        }.map { post ->
-            post.copy(
-                likesCount = likedDao.getAll().filter { liked ->
-                    liked.postId != post.id
-                    }.map { like ->
-                    like.loginId
-                    } as MutableList<Long>,
-                likedByMe = false
-                )
         }
+    }.mergeWith(likedDao.getAll()) { posts, likes ->
+        posts.orEmpty()
+            .map { post ->
+                post.copy(
+                    likesCount = likes.orEmpty().filter { liked ->
+                        liked.postId == post.id
+                    }.map { like ->
+                        like.loginId
+                    },
+                    likedByMe = false
+                )
+            }
     }
 
     override fun likeById(id: Long, userId: Long) {

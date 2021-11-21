@@ -9,7 +9,7 @@ import ru.netology.newjobit.model.entity.LikedEntity
 @Dao
 interface LikedDao {
     @Query("SELECT * FROM LikedEntity ORDER BY postId DESC")
-    fun getAll(): List<LikedEntity>
+    fun getAll(): LiveData<List<LikedEntity>>
 
     @Insert
     fun insert(likedEntity: LikedEntity)
