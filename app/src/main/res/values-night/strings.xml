@@ -26,4 +26,6 @@
     <string name="enter_password">Enter password</string>
     <string name="only_author_can_edit_post">Only the %1$s can edit the post</string>
     <string name="only_author_can_delete_post">Only the %1$s can delete the post</string>
+    <string name="user_settings">User settings</string>
+    <string name="exit">Exit</string>
 </resources>

@@ -41,4 +41,6 @@
     <string name="enter_password">Введите пароль</string>
     <string name="only_author_can_edit_post">Только %1$s может редактировать пост</string>
     <string name="only_author_can_delete_post">Только %1$s может удалить пост</string>
+    <string name="user_settings">Настройки пользователя</string>
+    <string name="exit">Выход</string>
 </resources>
