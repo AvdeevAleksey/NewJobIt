@@ -29,13 +29,14 @@ class PostRepositoryRoomImpl(
                     }.map { like ->
                         like.loginId
                     },
-                    likedByMe = false
+                    likedByMe = !likes.orEmpty().none { it.postId == post.id }
                 )
             }
     }
 
     override fun likeById(id: Long, userId: Long) {
         likedDao.changeLike(LikedEntity.fromLiked(id,userId))
+        postDao.likeById(id)
     }
 
     override fun shareById(id: Long) {
