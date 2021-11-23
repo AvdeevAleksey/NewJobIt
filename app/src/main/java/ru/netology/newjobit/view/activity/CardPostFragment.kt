@@ -59,7 +59,7 @@ class CardPostFragment : Fragment() {
 
             binding.apply {
                 Glide.with(avatarImageView).load(Uri.parse(post.avatar)).into(avatarImageView)
-                authorTextView.text = post.author
+                authorTextView.text = loginViewModel.loginLiveData.value?.find{it.userId == post.authorId}?.displayName
                 publishedTextView.text = post.published
                 contentTextView.text = post.content
                 videoContent.setImageURI(Uri.parse(post.videoInPost))
@@ -95,23 +95,26 @@ class CardPostFragment : Fragment() {
                 postMenuImageView.setOnClickListener {
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.options_post_menu)
+                        val postAuthor = loginViewModel.loginLiveData.value?.find{ login ->
+                            login.userId == post.authorId
+                        }?.displayName
                         setOnMenuItemClickListener { item ->
                             when (item.itemId) {
                                 R.id.postRemove -> {
-                                    if (post.author == login.displayName) {
+                                    if (post.authorId == login.userId) {
                                         postViewModel.removeById(post.id)
                                         true
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            getString(R.string.only_author_can_delete_post,post.author),
+                                            getString(R.string.only_author_can_delete_post,postAuthor),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         false
                                     }
                                 }
                                 R.id.postEdit -> {
-                                    if (post.author == login.displayName) {
+                                    if (post.authorId == login.userId) {
                                         findNavController().navigate(
                                             R.id.action_fragmentCardPost_to_postFragment,
                                             bundleOf(
@@ -124,7 +127,7 @@ class CardPostFragment : Fragment() {
                                     } else {
                                         Toast.makeText(
                                             context,
-                                            getString(R.string.only_author_can_edit_post,post.author),
+                                            getString(R.string.only_author_can_edit_post,postAuthor),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         false

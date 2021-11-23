@@ -1,20 +1,14 @@
 package ru.netology.newjobit.view.activity
 
-import android.Manifest
-import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.newjobit.view.adapter.OnInteractionListener
@@ -25,7 +19,6 @@ import ru.netology.newjobit.viewmodel.PostViewModel
 import ru.netology.newjobit.R
 import ru.netology.newjobit.databinding.FragmentFeedBinding
 import ru.netology.newjobit.model.dto.Login
-import ru.netology.newjobit.utils.AndroidUtils
 import ru.netology.newjobit.utils.AndroidUtils.LOGIN_KEY
 import ru.netology.newjobit.viewmodel.LoginViewModel
 
@@ -52,6 +45,7 @@ class FeedFragment : Fragment() {
         }
         val binding = FragmentFeedBinding.inflate(inflater,container,false)
         val postsAdapter = PostsAdapter (object : OnInteractionListener {
+
             override fun onLike(post: Post) {
                 postViewModel.likeById(post.id,login.userId)
             }
@@ -70,7 +64,7 @@ class FeedFragment : Fragment() {
                 postViewModel.viewingById(post.id)
             }
             override fun onPostEdit(post: Post) {
-                if (post.author == login.displayName) {
+                if (post.authorId == login.userId) {
                 findNavController().navigate(
                     R.id.action_feedFragment_to_postFragment,
                     bundleOf(
@@ -79,12 +73,12 @@ class FeedFragment : Fragment() {
                     )
                 )
                 postViewModel.editPost(post)
-                } else Toast.makeText(context,getString(R.string.only_author_can_edit_post,post.author), Toast.LENGTH_LONG).show()
+                } else Toast.makeText(context,getString(R.string.only_author_can_edit_post,getPostAuthor(post)), Toast.LENGTH_LONG).show()
             }
             override fun onPostRemove(post: Post) {
-                if (post.author == login.displayName) {
+                if (post.authorId == login.userId) {
                 postViewModel.removeById(post.id)
-                } else Toast.makeText(context,getString(R.string.only_author_can_delete_post,post.author), Toast.LENGTH_SHORT).show()
+                } else Toast.makeText(context,getString(R.string.only_author_can_delete_post,getPostAuthor(post)), Toast.LENGTH_SHORT).show()
             }
             override fun onPlayVideo(post: Post) {
                 val intent = Intent().apply {
@@ -122,7 +116,7 @@ class FeedFragment : Fragment() {
 
         binding.fabAddPost.setOnClickListener {
             val post: Post = postViewModel.edited.value.let { post ->
-                if (post?.id == 0L) post.copy(avatar = login.avatar, author = login.displayName) else return@setOnClickListener
+                if (post?.id == 0L) post.copy(avatar = login.avatar, authorId = login.userId) else return@setOnClickListener
             }
             findNavController().navigate(
                 R.id.action_feedFragment_to_postFragment,
@@ -141,6 +135,11 @@ class FeedFragment : Fragment() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+    fun getPostAuthor(post: Post): String {
+        return loginViewModel.loginLiveData.value?.find { login ->
+            login.userId == post.authorId
+        }?.displayName ?: ""
     }
 
 }

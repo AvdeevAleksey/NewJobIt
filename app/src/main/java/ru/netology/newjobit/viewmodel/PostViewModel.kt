@@ -15,7 +15,7 @@ private val simpleDateFormat = SimpleDateFormat("HH:mm:ss dd.MM.yyyy")
 private val empty = Post(
     id = 0L,
     avatar = "",
-    author = "Me",
+    authorId = 0L,
     published = simpleDateFormat.format(Calendar.getInstance().time).toString(),
     content = "",
     videoInPost = "",
@@ -47,15 +47,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = post
     }
 
-    fun changeContent(avatar: String, author: String, content: String) {
+    fun changeContent(avatar: String, authorId: Long, content: String) {
         edited.value?.let {
             val text = content.trim()
             if (it.content == text) {
                 return
             }
             if (avatar.isNotBlank())
-            edited.value = it.copy(avatar = avatar, author = author, content = text)
-            else edited.value = it.copy(author = author, content = text)
+            edited.value = it.copy(avatar = avatar, authorId = authorId, content = text)
+            else edited.value = it.copy(authorId = authorId, content = text)
         }
     }
 }

@@ -60,7 +60,7 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             Glide.with(avatarImageView).load(Uri.parse(post.avatar)).into(avatarImageView)
-            authorTextView.text = post.author
+            authorTextView.text = post.authorId
             publishedTextView.text = post.published
             contentTextView.text = post.content
             videoContent.setImageURI(Uri.parse(post.videoInPost))

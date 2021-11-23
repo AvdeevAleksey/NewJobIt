@@ -1,6 +1,5 @@
 package ru.netology.newjobit.model.entity
 
-import androidx.lifecycle.LiveData
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.newjobit.model.dto.Login
@@ -43,7 +42,7 @@ data class PostEntity(
             PostEntity(
                 post.id,
                 post.avatar,
-                post.author,
+                post.authorId,
                 post.published,
                 post.content,
                 post.videoInPost,

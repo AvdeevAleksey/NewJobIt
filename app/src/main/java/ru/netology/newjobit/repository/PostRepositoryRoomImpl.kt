@@ -28,8 +28,13 @@ class PostRepositoryRoomImpl(
                         liked.postId == post.id
                     }.map { like ->
                         like.loginId
-                    },
-                    likedByMe = !likes.orEmpty().none { it.postId == post.id }
+                    }
+                    //TODO Refactor Post author to authorId: Long
+//                    likedByMe = likes.orEmpty().filter { liked ->
+//                        liked.postId == post.id
+//                    }.any { like ->
+//                        like.loginId == post.authorId
+//                    }
                 )
             }
     }
