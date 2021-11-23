@@ -19,7 +19,7 @@ private val empty = Post(
     published = simpleDateFormat.format(Calendar.getInstance().time).toString(),
     content = "",
     videoInPost = "",
-    likesCount = mutableListOf(),
+    likedUsers = mutableListOf(),
     shareCount = 0,
     viewingCount = 0,
     likedByMe = false,
@@ -32,7 +32,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     )
     val postLiveData = postRepository.getAll()
     val edited = MutableLiveData(empty)
-    fun likeById(id: Long, userId: Long) = postRepository.likeById(id, userId)
+    fun likeById(id: Long, userLogin: String) = postRepository.likeById(id, userLogin)
     fun shareById(id: Long) = postRepository.shareById(id)
     fun viewingById(id: Long) = postRepository.viewingById(id)
     fun removeById(id: Long) = postRepository.removeById(id)

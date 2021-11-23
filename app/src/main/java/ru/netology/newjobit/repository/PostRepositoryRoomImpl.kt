@@ -24,18 +24,22 @@ class PostRepositoryRoomImpl(
         posts.orEmpty()
             .map { post ->
                 post.copy(
-                    likesCount = likes.orEmpty().filter { liked ->
+                    likedUsers = likes.orEmpty().filter { liked ->
                         liked.postId == post.id
                     }.map { like ->
-                        like.loginId
+                        like.userLogin
                     },
-                    likedByMe = !likes.orEmpty().none { it.postId == post.id }
+                    likedByMe = !likes.orEmpty().filter { liked ->
+                        liked.postId == post.id
+                    }.none { like ->
+                        like.userLogin == post.author
+                    }
                 )
             }
     }
 
-    override fun likeById(id: Long, userId: Long) {
-        likedDao.changeLike(LikedEntity.fromLiked(id,userId))
+    override fun likeById(id: Long, userLogin: String) {
+        likedDao.changeLike(LikedEntity.fromLiked(id,userLogin))
         postDao.likeById(id)
     }
 

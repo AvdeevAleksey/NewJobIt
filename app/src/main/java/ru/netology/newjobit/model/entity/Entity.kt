@@ -1,6 +1,5 @@
 package ru.netology.newjobit.model.entity
 
-import androidx.lifecycle.LiveData
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ru.netology.newjobit.model.dto.Login
@@ -47,7 +46,7 @@ data class PostEntity(
                 post.published,
                 post.content,
                 post.videoInPost,
-                post.likesCount.toString(),
+                post.likedUsers.toString(),
                 post.shareCount,
                 post.viewingCount,
                 post.likedByMe,
@@ -60,10 +59,12 @@ data class LikedEntity(
     @PrimaryKey(autoGenerate = true)
     val likeId: Long,
     val postId: Long,
-    val loginId: Long
+    val userLogin: String
 ) {
     companion object {
-        fun fromLiked(postId: Long, loginId: Long): LikedEntity = LikedEntity(likeId = 0L, postId = postId,loginId = loginId)
+        fun fromLiked(postId: Long, userLogin: String): LikedEntity {
+            return LikedEntity(likeId = 0L, postId = postId, userLogin = userLogin)
+        }
     }
 }
 

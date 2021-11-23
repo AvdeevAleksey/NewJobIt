@@ -14,15 +14,15 @@ interface LikedDao {
     @Insert
     fun insert(likedEntity: LikedEntity)
 
-    @Query("DELETE FROM LikedEntity WHERE postId = :postId AND loginId = :loginId")
-    fun removeLikeById(postId: Long, loginId: Long)
+    @Query("DELETE FROM LikedEntity WHERE postId = :postId AND userLogin = :userLogin")
+    fun removeLikeById(postId: Long, userLogin: String)
 
     fun changeLike(likedEntity: LikedEntity) =
-        if (!userLikedPost(likedEntity.postId,likedEntity.loginId))
+        if (!userLikedPost(likedEntity.postId,likedEntity.userLogin))
             insert(likedEntity)
-        else removeLikeById(likedEntity.postId, likedEntity.loginId)
+        else removeLikeById(likedEntity.postId, likedEntity.userLogin)
 
-    @Query("SELECT * FROM LikedEntity WHERE postId LIKE :postId AND loginId LIKE :loginId")
-    fun userLikedPost(postId: Long, loginId: Long): Boolean
+    @Query("SELECT * FROM LikedEntity WHERE postId LIKE :postId AND userLogin LIKE :userLogin")
+    fun userLikedPost(postId: Long, userLogin: String): Boolean
 
 }

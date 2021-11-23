@@ -65,8 +65,10 @@ class CardPostFragment : Fragment() {
                 videoContent.setImageURI(Uri.parse(post.videoInPost))
                 shareImageButton.text = countMyClick(post.shareCount)
                 viewsImageButton.text = countMyClick(post.viewingCount)
-                likeImageButton.isChecked = post.likedByMe
-                likeImageButton.text = countMyClick(post.likesCount.size)
+                likeImageButton.isChecked = postViewModel.postLiveData.value?.find {
+                    it.id == post.id
+                }?.likedUsers.orEmpty().any { it == login.displayName }
+                likeImageButton.text = countMyClick(post.likedUsers.size)
                 videoGroup.isVisible = post.videoInPost.isNotBlank()
 
                 playVideoButton.setOnClickListener {
@@ -76,7 +78,7 @@ class CardPostFragment : Fragment() {
                     playVideo(post)
                 }
                 likeImageButton.setOnClickListener {
-                    postViewModel.likeById(post.id, login.userId)
+                    postViewModel.likeById(post.id, login.displayName)
                 }
                 shareImageButton.setOnClickListener {
                     val intent = Intent().apply {
